@@ -88,7 +88,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         // printout the results
 	foreach ($pagesList as $id => $excerpt) {
             $metaData = p_get_metadata($id);
-            echo '<a href="/doku.php/'.$id.'" title="" class="wikilink1">'.hsc($id).' ('.hsc($metaData['title']).')'.'</a><br/>';
+            if (!empty($metaData['title'])){
+                $title = hsc($id).' ('.hsc($metaData['title']).')';
+            } else {
+                $title = hsc($id);
+            }
+            echo '<a href="'.wl($id).'" title="" class="wikilink1">'.$title.'</a><br/>';
             echo '<span class="search_cnt">Last modified:'.date("Y-m-d H:i",$metaData['date']['modified']).'</span>';
             echo '<div class="search_snippet">';
             echo $excerpt;

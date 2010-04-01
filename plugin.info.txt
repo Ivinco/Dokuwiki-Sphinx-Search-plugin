@@ -1,0 +1,7 @@
+base    sphinxsearch
+author  Yaroslav Vorozhko
+email 	yaroslav@ivinco.com
+date 	2010-03-31
+name 	SphinxSearch
+desc 	Replace the default search 
+url 	http://www.ivinco.com

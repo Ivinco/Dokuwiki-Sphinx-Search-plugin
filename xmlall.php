@@ -6,23 +6,10 @@
  * @author     Andreas Gohr <andi@splitbrain.org>
  */
 
-// dokuwiki folder (absolute system path)
-$dokuwiki_folder =  '/www/dokuwiki/htdocs';
-
-// dokuwiki url
-$dokuwiki_url = 'http://dokuwiki.home';
-
-// link prefix to another page
-$link_prefix = 'http://dokuwiki.home/doc.php/';
 
 /* Initialization */
 
-define('DOKU_PATH', $dokuwiki_folder);
-define('DOKU_INC', DOKU_PATH . '/');
-define('DOKU_CONF', DOKU_PATH . '/conf/');
-define('DOKU_URL', $dokuwiki_url  . '/');
-
-if(!defined('DOKU_INC')) define('DOKU_INC',dirname(__FILE__).'/');
+if(!defined('DOKU_INC')) define('DOKU_INC',dirname(__FILE__).'/../../../');
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 require_once(DOKU_INC.'inc/init.php');
@@ -35,6 +22,10 @@ require_once(DOKU_INC.'inc/pageutils.php');
 require_once(DOKU_INC.'inc/search.php');
 
 require_once(DOKU_PLUGIN.'sphinxsearch/PageMapper.php');
+
+if (!file_exists(DOKU_INC.$conf['savedir']."/sphinxsearch/")){
+	mkdir(DOKU_INC.$conf['savedir']."/sphinxsearch/");
+}
 
 $pagesList = getPagesList();
 
@@ -61,6 +52,7 @@ foreach($pagesList as $row){
     //get meta data
     $metadata = p_get_metadata($dokuPageId);    
     //parse meta data for headers, abstract, date, authors
+    $data = array();
     $data['id'] = crc32($dokuPageId);
     $data['headings'] = strip_tags(getHeadings($metadata));
     $data['categories'] = getCategories($dokuPageId);

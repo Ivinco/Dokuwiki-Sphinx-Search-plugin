@@ -6,18 +6,18 @@
 
 class PageMapper
 {
-    private $_database = 'sphinxplugin';
+    private $_database = 'pagedata';
     private $_table = 'pages';
     private $_db = null;
     public function  __construct()
     {
         global $conf;
-        $this->_dbpath = DOKU_INC . $conf['savedir'] . '/'.$this->_database;
+        $this->_dbpath = DOKU_INC . $conf['savedir'] . '/sphinxsearch/'.$this->_database;
 
-        if (false != ($db = new SQLiteDatabase($this->_dbpath))) {
+        if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {
             $q = @$db->query("SELECT 1 FROM {$this->_table} limit 1");
             if ($q === false) {
-                $db->queryExec("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11))");
+                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11))");
             }
         }
         $this->_db = $db;
@@ -25,7 +25,7 @@ class PageMapper
 
     public function add($page)
     {
-        $this->_db->queryExec("REPLACE into {$this->_table}(page, page_crc) values('{$page}', '".crc32($page)."')");
+        $this->_db->query("REPLACE into {$this->_table}(page, page_crc) values('{$page}', '".crc32($page)."')");
     }
 
     public function getAll()

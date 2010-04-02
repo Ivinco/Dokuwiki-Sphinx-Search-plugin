@@ -14,7 +14,8 @@ class SphinxSearch
         $this->_sphinx = new SphinxClient();
         $this->_sphinx->SetServer($host, $port);
         $this->_sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $this->_sphinx->SetFieldWeights(array('categories' => 10));
+        $this->_sphinx->SetFieldWeights(array('categories' => 5, 'title' => 20, 'body' => 3));
+        $this->_sphinx->SetFilter('level', array(1));
 
         $this->_index = $index;
     }
@@ -35,16 +36,16 @@ class SphinxSearch
 
         $pagesList = array();
         foreach ($pageCrcList as $crc){
-            $pagesList[] = $pagesIds[$crc];
-            $data[$pagesIds[$crc]] = p_wiki_xhtml($pagesIds[$crc]);
+            $data[$crc] = p_wiki_xhtml($pagesIds[$crc]['page']);
         }
 
         $pagesExcerpt = $this->_sphinx->BuildExcerpts($data, $this->_index, $query);
         $i = 0;
-        foreach($data as $key => $v){
-            $data[$key] = $pagesExcerpt[$i++];
+        $results = array();
+        foreach($data as $crc => $notused){
+            $results[$crc] = array( 'page' => $pagesIds[$crc]['page'], 'excerpt' => $pagesExcerpt[$i++], 'hid' => $pagesIds[$crc]['hid'], 'title' => $pagesIds[$crc]['title']);
         }
-        return $data;
+        return $results;
     }
 
     public function getTotalFound()

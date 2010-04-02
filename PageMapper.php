@@ -17,15 +17,15 @@ class PageMapper
         if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {
             $q = @$db->query("SELECT 1 FROM {$this->_table} limit 1");
             if ($q === false) {
-                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11))");
+                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11), hid varchar(1024), title varchar (1024))");
             }
         }
         $this->_db = $db;
     }
 
-    public function add($page)
+    public function add($page, $title = '', $hid='')
     {
-        $this->_db->query("REPLACE into {$this->_table}(page, page_crc) values('{$page}', '".crc32($page)."')");
+        $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values('{$page}', '".crc32($page.$hid)."', '{$hid}', '{$title}')");
     }
 
     public function getAll()
@@ -39,9 +39,10 @@ class PageMapper
         $sql = sprintf("select * from {$this->_table} where page_crc in (%s)", implode(",", $pageCrcList));
         $result = $this->_db->query($sql);
         $rows = $result->fetchAll($query);
+        
         $pages = array();
         foreach($rows as $row){
-            $pages[$row['page_crc']] = $row['page'];
+            $pages[$row['page_crc']] = array('page' => $row['page'], 'hid' => $row['hid'], 'title' => $row['title']);
         }
         return $pages;
     }

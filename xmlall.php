@@ -20,6 +20,8 @@ require_once(DOKU_INC.'inc/feedcreator.class.php');
 require_once(DOKU_INC.'inc/auth.php');
 require_once(DOKU_INC.'inc/pageutils.php');
 require_once(DOKU_INC.'inc/search.php');
+require_once(DOKU_INC.'inc/parser/parser.php');
+
 
 require_once(DOKU_PLUGIN.'sphinxsearch/PageMapper.php');
 
@@ -35,13 +37,11 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 <sphinx:schema>
 <sphinx:field name="title"/> 
 <sphinx:field name="body"/>
-<sphinx:field name="headings"/>
 <sphinx:field name="categories"/>
+<sphinx:field name="level"/>
 <sphinx:field name="modified"/>
-<sphinx:field name="created"/>
 <sphinx:field name="creator"/>
-<sphinx:field name="extra"/>
-<sphinx:attr name="modified" type="timestamp"/>
+<sphinx:attr name="level" type="int" bits="8" default="1"/>
 </sphinx:schema>
 ';
 
@@ -50,22 +50,37 @@ $pageMapper = new PageMapper();
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
     //get meta data
-    $metadata = p_get_metadata($dokuPageId);    
-    //parse meta data for headers, abstract, date, authors
-    $data = array();
-    $data['id'] = crc32($dokuPageId);
-    $data['headings'] = strip_tags(getHeadings($metadata));
-    $data['categories'] = getCategories($dokuPageId);
-    $data['created'] = $metadata['date']['created'];
-    $data['modified'] = $metadata['date']['modified'];
-    $data['creator'] = $metadata['creator'];
-    $data['title'] = strip_tags($metadata['title']);
-    $data['extra'] = strip_tags($metadata['description']['abstract']);
-    $data['body'] = strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+    $metadata = p_get_metadata($dokuPageId);
+    $sections = getDocumentsByHeadings($dokuPageId, $metadata);
+    if (!empty($sections)){
+        foreach($sections as $hid => $section){
+            //parse meta data for headers, abstract, date, authors
+            $data = array();
+            $data['id'] = crc32($dokuPageId.$hid);
+            $data['categories'] = getCategories($dokuPageId) . '#' . $hid;
+            $data['level'] = $section['level'];
+            $data['modified'] = $metadata['date']['modified'];
+            $data['creator'] = $metadata['creator'];
+            $data['title'] = strip_tags($section['title']);
+            $data['body'] = strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
-    echo formatXml($data)."\n";
+            echo formatXml($data)."\n";
+            $pageMapper->add($dokuPageId, $section['title'], $hid);
+        }
+    } else {
+        //parse meta data for headers, abstract, date, authors
+        $data = array();
+        $data['id'] = crc32($dokuPageId);
+        $data['categories'] = getCategories($dokuPageId);
+        $data['level'] = 1;
+        $data['modified'] = $metadata['date']['modified'];
+        $data['creator'] = $metadata['creator'];
+        $data['title'] = strip_tags($metadata['title']);
+        $data['body'] = strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
-    $pageMapper->add($dokuPageId);
+        echo formatXml($data)."\n";
+        $pageMapper->add($dokuPageId, $metadata['title']);
+    }
 }
 
 echo '</sphinx:docset>';
@@ -78,32 +93,106 @@ function formatXml($data)
 <sphinx:document id="{id}">
 <title><![CDATA[[{title}]]></title>
 <body><![CDATA[[{body}]]></body>
-<headings><![CDATA[[{headings}]]></headings>
 <categories><![CDATA[[{categories}]]></categories>
+<level>{level}</level>
 <modified>{modified}</modified>
-<created>{created}</created>
 <creator>{creator}</creator>
-<extra><![CDATA[[{extra}]]></extra>
 </sphinx:document>
 
 ';
     
-    return str_replace( array('{id}', '{title}', '{body}', '{headings}', '{categories}', '{modified}', '{created}', '{creator}', '{extra}'),
-                        array($data['id'], $data['title'], $data['body'], $data['headings'],
-                            $data['categories'],  $data['modified'], $data['created'], $data['creator'], $data['extra']),
+    return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}', '{creator}'),
+                        array($data['id'], $data['title'], $data['body'], $data['categories'],
+                             $data['level'], $data['modified'], $data['creator']),
                 $xmlFormat
             );
 }
 
-function getHeadings($metadata)
+function getDocumentsByHeadings($id, $metadata)
 {
-    if (empty($metadata) || empty($metadata['description']['tableofcontents'])) return '';
+    if (empty($metadata) || empty($metadata['description']['tableofcontents'])) return false;
 
-    $result = array();
+    $sections = array();
     foreach($metadata['description']['tableofcontents'] as $row){
-        $result[] = $row['title'];
+        $sections[$row['hid']] = array(
+                                    'section' => getSection($id, $row['title']),
+                                    'title' => $row['title'],
+                                    'level' => $row['level']
+                                    );
     }
-    return implode(", ", $result);
+    return $sections;
+}
+
+function getSection($id, $header)
+{
+    // Create the parser
+    $Parser = & new Doku_Parser();
+
+    // Add the Handler
+    $Parser->Handler = & new Doku_Handler();
+
+    // Load the header mode to find headers
+    $Parser->addMode('header',new Doku_Parser_Mode_Header());
+
+    // Load the modes which could contain markup that might be
+    // mistaken for a header
+    $Parser->addMode('listblock',new Doku_Parser_Mode_ListBlock());
+    $Parser->addMode('preformatted',new Doku_Parser_Mode_Preformatted());
+    $Parser->addMode('table',new Doku_Parser_Mode_Table());
+    $Parser->addMode('unformatted',new Doku_Parser_Mode_Unformatted());
+    $Parser->addMode('php',new Doku_Parser_Mode_PHP());
+    $Parser->addMode('html',new Doku_Parser_Mode_HTML());
+    $Parser->addMode('code',new Doku_Parser_Mode_Code());
+    $Parser->addMode('file',new Doku_Parser_Mode_File());
+    $Parser->addMode('quote',new Doku_Parser_Mode_Quote());
+    $Parser->addMode('footnote',new Doku_Parser_Mode_Footnote());
+    $Parser->addMode('internallink',new Doku_Parser_Mode_InternalLink());
+    $Parser->addMode('media',new Doku_Parser_Mode_Media());
+    $Parser->addMode('externallink',new Doku_Parser_Mode_ExternalLink());
+    $Parser->addMode('windowssharelink',new Doku_Parser_Mode_WindowsShareLink());
+    $Parser->addMode('filelink',new Doku_Parser_Mode_FileLink());
+
+    // Loads the raw wiki document
+    $doc = io_readFile(wikiFN($id));
+
+    // Get a list of instructions
+    $instructions = $Parser->parse($doc);
+
+    unset($Parser);
+
+    // Use this to watch when we're inside the section we want
+    $inSection = FALSE;
+    $startPos = 0;
+    $endPos = 0;
+
+    // Loop through the instructions
+    foreach ( $instructions as $instruction ) {
+
+        if ( !$inSection ) {
+
+            // Look for the header for the "Lists" heading
+            if ( $instruction[0] == 'header' &&
+                    trim($instruction[1][0]) == $header ) {
+
+                $startPos = $instruction[2];
+                $inSection = TRUE;
+            }
+        } else {
+
+            // Look for the end of the section
+            if ( $instruction[0] == 'section_close' ) {
+                $endPos = $instruction[2];
+                break;
+            }
+        }
+    }
+
+    // Normalize and pad the document in the same way the parse does
+    // so that byte indexes with match
+    $doc = "\n".str_replace("\r\n","\n",$doc)."\n";
+    $section = substr($doc, $startPos, ($endPos-$startPos));
+
+    return $section;
 }
 
 function getCategories($id)

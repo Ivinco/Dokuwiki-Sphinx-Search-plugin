@@ -81,19 +81,32 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
         $pagesList = $search->search($query, $start, $this->getConf('maxresults'));
+        
         $totalFound = $search->getTotalFound();
 
         echo '<h2>Found '.$totalFound .' documents for query "' . hsc($query).'"</h2>';
 	echo '<div class="search_result">';
         // printout the results
-	foreach ($pagesList as $id => $excerpt) {
+	foreach ($pagesList as $crc => $row) {
+            $id = $row['page'];
+            $excerpt = $row['excerpt'];
+            $hid = $row['hid'];
             $metaData = p_get_metadata($id);
-            if (!empty($metaData['title'])){
-                $title = hsc($id).' ('.hsc($metaData['title']).')';
+            if (!empty($row['title'])){
+                $hidTitle = $row['title'];
+            } else {
+                $hidTitle = $metaData['title'];
+            }
+            
+            if (!empty($hidTitle)){
+                $title = hsc($id).' ('.hsc($hidTitle).')';
             } else {
                 $title = hsc($id);
             }
-            echo '<a href="'.wl($id).'" title="" class="wikilink1">'.$title.'</a><br/>';
+            
+            $href = !empty($hid) ? (wl($id).'#'.$hid) : wl($id);
+
+            echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';
             echo '<span class="search_cnt">Last modified:'.date("Y-m-d H:i",$metaData['date']['modified']).'</span>';
             echo '<div class="search_snippet">';
             echo $excerpt;

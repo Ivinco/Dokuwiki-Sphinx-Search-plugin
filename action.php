@@ -86,18 +86,26 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $pagesList = $search->search($query, $start, $this->getConf('maxresults'));
         
         $totalFound = $search->getTotalFound();
+        if(!$totalFound){
+            echo '<b>Nothing was found by ' . $query . '</b>!';
+            exit;
+        }
         echo '<style type="text/css">
             div.dokuwiki .search_snippet{
                 color:#000000;
+                margin-left:0px;
             }
             div.dokuwiki .search_cnt{
                 color:#CCCCCC;
                 font-size: 10px;
             }
+            div.dokuwiki .search_nmsp{
+                font-size: 10px;
+            }
             </style>
             ';
 
-        echo '<h2>Found '.$totalFound .' documents for query "' . hsc($query).'"</h2>';
+        echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
 	echo '<div class="search_result">';
         // printout the results
 	foreach ($pagesList as $crc => $row) {
@@ -125,12 +133,14 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             echo '</div>';
             $sep=' &raquo; ';
             $i = 0;
+            echo '<span class="search_nmsp">';
             foreach ($namespaces as $link => $pageTitle){
                 tpl_link($link, $pageTitle);
                 if ($i++ < count($namespaces)-1){
                     echo $sep;
                 }
             }
+            echo '</span>';
             echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
             echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
             echo '<br />';echo '<br />';

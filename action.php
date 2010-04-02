@@ -107,7 +107,8 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             $href = !empty($hid) ? (wl($id).'#'.$hid) : wl($id);
 
             echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';
-            echo '<span class="search_cnt">Last modified:'.date("Y-m-d H:i",$metaData['date']['modified']).'</span>';
+            echo '<span class="search_cnt">Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
+            echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
             echo '<div class="search_snippet">';
             echo $excerpt;
             echo '</div>';            

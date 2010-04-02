@@ -8,10 +8,13 @@
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
+require_once(DOKU_INC.'inc/parser/parser.php');
+
 require_once(DOKU_PLUGIN . 'action.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/sphinxapi.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/PageMapper.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/SphinxSearch.php');
+require_once(DOKU_PLUGIN . 'sphinxsearch/functions.php');
 
 
 class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {

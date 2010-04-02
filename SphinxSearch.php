@@ -36,7 +36,11 @@ class SphinxSearch
 
         $pagesList = array();
         foreach ($pageCrcList as $crc){
-            $data[$crc] = p_wiki_xhtml($pagesIds[$crc]['page']);
+            if (!empty($pagesIds[$crc]['hid'])){
+                $data[$crc] =p_render('xhtml',p_get_instructions(getSection($pagesIds[$crc]['page'], $pagesIds[$crc]['title'])),$info);
+            } else {
+                $data[$crc] = p_wiki_xhtml($pagesIds[$crc]['page']);
+            }            
         }
 
         $pagesExcerpt = $this->_sphinx->BuildExcerpts($data, $this->_index, $query);

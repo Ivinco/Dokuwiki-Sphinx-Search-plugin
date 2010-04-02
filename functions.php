@@ -153,3 +153,30 @@ function getCategories($id)
 
     return $data;
 }
+
+function getNsLinks($id)
+{
+    global $conf;
+    $parts = explode(':', $id);
+    $count = count($parts);
+
+    // print intermediate namespace links
+    $part = '';
+    $links = array();
+    for($i=0; $i<$count; $i++){
+        $part .= $parts[$i].':';
+        $page = $part;
+        resolve_pageid('',$page,$exists);
+        if ($page == $conf['start']) continue; // Skip startpage
+
+        // output
+        if ($exists){
+            $title = useHeading('navigation') ? p_get_first_heading($page) : $page;
+            if(!$title) $title = $parts[$i];
+        } else {
+            $title = $parts[$i];
+        }
+        $links[wl($page)] = $title;
+    }
+    return $links;
+}

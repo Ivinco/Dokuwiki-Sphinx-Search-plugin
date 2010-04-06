@@ -174,7 +174,7 @@ function getNsLinks($id, $query, $search, $queryString)
         $part .= $parts[$i].':';
         $page = $part;
         resolve_pageid('',$page,$exists);
-        if ($page == $conf['start']) continue; // Skip startpage
+        //if ($page == $conf['start']) continue; // Skip startpage
 
         // output
         if ($exists){

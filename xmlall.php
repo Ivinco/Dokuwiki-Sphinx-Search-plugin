@@ -50,7 +50,8 @@ $pageMapper = new PageMapper();
 
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
-    if (empty($dokuPageId)){
+    resolve_pageid('',$page,$exists);
+    if (empty($dokuPageId) || !$exists){ //do not include not exists page
         continue;
     }
     //get meta data

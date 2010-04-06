@@ -107,34 +107,36 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
         echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
 	echo '<div class="search_result">';
+        $queryString = $_SERVER['QUERY_STRING'];
         // printout the results
 	foreach ($pagesList as $crc => $row) {
             $id = $row['page'];
-            $excerpt = $row['excerpt'];
+            $bodyExcerpt = $row['bodyExcerpt'];
+            $titleExcerpt = $row['titleExcerpt'];
             $hid = $row['hid'];
             $metaData = p_get_metadata($id);
-            if (!empty($row['title'])){
-                $hidTitle = $row['title'];
+            if (!empty($titleExcerpt)){
+                $title = $titleExcerpt;
             } else {
-                $hidTitle = $metaData['title'];
+                $title = hsc($metaData['title']);
             }
             
-            if (!empty($hidTitle)){
-                $title = hsc($hidTitle);
-            } else {
+            if (empty($title)){
                 $title = hsc($id);
             }
-            $namespaces = getNsLinks($id);            
+            $namespaces = getNsLinks($id, $query, $search, $queryString);
             $href = !empty($hid) ? (wl($id).'#'.$hid) : wl($id);
 
-            echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';            
+            echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';
             echo '<div class="search_snippet">';
-            echo strip_tags($excerpt, '<b>,<strong>');
+            echo strip_tags($bodyExcerpt, '<b>,<strong>');
             echo '</div>';
             $sep=' &raquo; ';
             $i = 0;
             echo '<span class="search_nmsp">';
-            foreach ($namespaces as $link => $pageTitle){
+            foreach ($namespaces as $row){
+                $link = $row['link'];
+                $pageTitle = $row['title'];
                 tpl_link($link, $pageTitle);
                 if ($i++ < count($namespaces)-1){
                     echo $sep;

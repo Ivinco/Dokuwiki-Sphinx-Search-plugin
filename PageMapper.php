@@ -17,7 +17,7 @@ class PageMapper
         if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {
             $q = @$db->query("SELECT 1 FROM {$this->_table} limit 1");
             if ($q === false) {
-                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11), hid varchar(1024), title varchar (1024))");
+                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11), hid varchar(1024), title varchar (1024), unique index a on pages(page, page_crc))");
             }
         }
         $this->_db = $db;
@@ -25,7 +25,7 @@ class PageMapper
 
     public function add($page, $title = '', $hid='')
     {
-        $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values('{$page}', '".crc32($page.$hid)."', '{$hid}', '{$title}')");
+        $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values('{$page}', '".crc32($page.$hid)."', '{$hid}', '{$title}')", SQLITE_BOTH, $error);
     }
 
     public function getAll()

@@ -50,6 +50,9 @@ $pageMapper = new PageMapper();
 
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
+    if (empty($dokuPageId)){
+        continue;
+    }
     //get meta data
     $metadata = p_get_metadata($dokuPageId);
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
@@ -85,118 +88,3 @@ foreach($pagesList as $row){
 }
 
 echo '</sphinx:docset>';
-
-
-
-
-
-/**
- * Array
-(
-    [date] => Array
-        (
-            [created] => 1239181434
-            [modified] => 1239202933
-        )
-
-    [creator] => Sergey Nikolaev
-    [last_change] => Array
-        (
-            [date] => 1239202933
-            [ip] => 85.118.229.162
-            [type] => E
-            [id] => cal:minutes:boardreader:200904:20090408
-            [user] => snikolaev
-            [sum] =>
-            [extra] =>
-        )
-
-    [contributor] => Array
-        (
-            [snikolaev] => Sergey Nikolaev
-        )
-
-    [title] => BoardReader call of Apr 8 2009
-    [description] => Array
-        (
-            [tableofcontents] => Array
-                (
-                    [0] => Array
-                        (
-                            [hid] => boardreader_call_of_apr_8_2009
-                            [title] => BoardReader call of Apr 8 2009
-                            [type] => ul
-                            [level] => 1
-                        )
-
-                    [1] => Array
-                        (
-                            [hid] => sergey
-                            [title] => Sergey
-                            [type] => ul
-                            [level] => 2
-                        )
-
-                    [2] => Array
-                        (
-                            [hid] => slava
-                            [title] => Slava
-                            [type] => ul
-                            [level] => 2
-                        )
-
-                    [3] => Array
-                        (
-                            [hid] => roman
-                            [title] => Roman
-                            [type] => ul
-                            [level] => 2
-                        )
-
-                    [4] => Array
-                        (
-                            [hid] => nikita
-                            [title] => Nikita
-                            [type] => ul
-                            [level] => 2
-                        )
-
-                    [5] => Array
-                        (
-                            [hid] => discussion
-                            [title] => Discussion
-                            [type] => ul
-                            [level] => 2
-                        )
-
-                )
-
-            [abstract] => Participants: Mindaugas, Sergey, Slava, Roman, Nikita
-
-Duration: 23 min
-
-Sergey
-
-Status:
-
-	*  published Roman's changes
-	*  started reviewing Slava's changes
-
-
-Plans:
-
-	*  start altering (singature field)
-	*  select server error handling
-	*  publish Slava's and Roman's changes
-        )
-
-    [internal] => Array
-        (
-            [cache] => 1
-            [toc] => 1
-        )
-
-)
-
- */
-

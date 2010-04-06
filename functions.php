@@ -154,15 +154,22 @@ function getCategories($id)
     return $data;
 }
 
-function getNsLinks($id)
+function getNsLinks($id, $query, $search, $queryString)
 {
     global $conf;
     $parts = explode(':', $id);
     $count = count($parts);
 
+    $queryStringValue = $queryString;
+
+    if (false !== ($pos = strpos($queryStringValue, "+%40categories"))){;
+        $queryStringValue = substr($queryStringValue, 0, $pos);
+    }
+
     // print intermediate namespace links
     $part = '';
-    $links = array();
+    $data = array();
+    $titles = array();
     for($i=0; $i<$count; $i++){
         $part .= $parts[$i].':';
         $page = $part;
@@ -171,12 +178,20 @@ function getNsLinks($id)
 
         // output
         if ($exists){
-            $title = useHeading('navigation') ? p_get_first_heading($page) : $page;
-            if(!$title) $title = $parts[$i];
+            $titles[wl($page)] = useHeading('navigation') ? p_get_first_heading($page) : $page;
+            if(!$titles[wl($page)]) {
+                $titles[wl($page)] = $parts[$i];
+            }
         } else {
-            $title = $parts[$i];
-        }
-        $links[wl($page)] = $title;
+            continue; //Skip not exists pages
+            $titles[wl($page)] = $parts[$i];
+        }      
+        $data[] = array('link' => '?'. $queryStringValue . urlencode(" @categories $page"));
     }
-    return $links;
+    $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($query));
+    $i = 0;
+    foreach ($data as $key => $notused){
+        $data[$key]['title'] = $titleExcerpt[$i++];
+    }
+    return $data;
 }

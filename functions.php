@@ -173,17 +173,19 @@ function getNsLinks($id, $query, $search, $queryString)
         $part .= $parts[$i].':';
         $page = $part;
         resolve_pageid('',$page,$exists);
-        //if ($page == $conf['start']) continue; // Skip startpage
+        if (preg_match("#:start$#", $page)) {
+            $page = substr($page, 0, strpos($page, ":start"));
+        }; 
 
         // output
         if ($exists){
-            $titles[wl($page)] = useHeading('navigation') ? p_get_first_heading($page) : $page;
+            //$titles[wl($page)] = useHeading('navigation') ? p_get_first_heading($page) : $page;
             if(!$titles[wl($page)]) {
                 $titles[wl($page)] = $parts[$i];
             }
         } else {
             continue; //Skip not exists pages
-            $titles[wl($page)] = $parts[$i];
+            //$titles[wl($page)] = $parts[$i];
         }      
         $data[] = array('link' => '?'. $queryStringValue . urlencode(" @categories $page"));
     }

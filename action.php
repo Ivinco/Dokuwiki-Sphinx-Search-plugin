@@ -131,7 +131,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             echo '<div class="search_snippet">';
             echo strip_tags($bodyExcerpt, '<b>,<strong>');
             echo '</div>';
-            $sep=' &raquo; ';
+            $sep=':';
             $i = 0;
             echo '<span class="search_nmsp">';
             foreach ($namespaces as $row){

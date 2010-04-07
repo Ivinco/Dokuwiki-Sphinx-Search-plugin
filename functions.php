@@ -13,14 +13,13 @@ function formatXml($data)
 <categories><![CDATA[[{categories}]]></categories>
 <level>{level}</level>
 <modified>{modified}</modified>
-<creator>{creator}</creator>
 </sphinx:document>
 
 ';
 
-    return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}', '{creator}'),
+    return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}'),
                         array($data['id'], $data['title'], $data['body'], $data['categories'],
-                             $data['level'], $data['modified'], $data['creator']),
+                             $data['level'], $data['modified']),
                 $xmlFormat
             );
 }

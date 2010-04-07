@@ -25,20 +25,27 @@ class PageMapper
 
     public function add($page, $title = '', $hid='')
     {
-        $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values('{$page}', '".crc32($page.$hid)."', '{$hid}', '{$title}')", SQLITE_BOTH, $error);
+        $result = $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values(".$this->_db->quote($page).",
+                                    '".crc32($page.$hid)."',
+                                    ".$this->_db->quote($hid).",
+                                    ".$this->_db->quote($title).")");
+        if (!$result) {
+            //echo "\nPDO::errorInfo():\n";
+            //print_r($this->_db->errorInfo());
+        }
     }
 
     public function getAll()
     {
         $result = $this->_db->query("select * from {$this->_table}");
-        return $result->fetchAll($query);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getByCrc($pageCrcList)
     {
         $sql = sprintf("select * from {$this->_table} where page_crc in (%s)", implode(",", $pageCrcList));
         $result = $this->_db->query($sql);
-        $rows = $result->fetchAll($query);
+        $rows = $result->fetchAll(PDO::FETCH_ASSOC);
         
         $pages = array();
         foreach($rows as $row){

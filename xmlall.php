@@ -41,13 +41,11 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 <sphinx:field name="categories"/>
 <sphinx:field name="level"/>
 <sphinx:field name="modified"/>
-<sphinx:field name="creator"/>
 <sphinx:attr name="level" type="int" bits="8" default="1"/>
 </sphinx:schema>
 ';
 
 $pageMapper = new PageMapper();
-
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
     resolve_pageid('',$page,$exists);
@@ -65,7 +63,6 @@ foreach($pagesList as $row){
             $data['categories'] = getCategories($dokuPageId) . '#' . $hid;
             $data['level'] = $section['level'];
             $data['modified'] = $metadata['date']['modified'];
-            $data['creator'] = $metadata['creator'];
             $data['title'] = strip_tags($section['title']);
             $data['body'] = strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
@@ -79,13 +76,12 @@ foreach($pagesList as $row){
         $data['categories'] = getCategories($dokuPageId);
         $data['level'] = 1;
         $data['modified'] = $metadata['date']['modified'];
-        $data['creator'] = $metadata['creator'];
         $data['title'] = strip_tags($metadata['title']);
         $data['body'] = strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title']);
     }
+    
 }
-
 echo '</sphinx:docset>';

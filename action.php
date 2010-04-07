@@ -1,8 +1,8 @@
 <?php
 /**
- * Script to search in uploaded pdf documents
+ * Script to search in dokuwiki documents
  *
- * @author Dominik Eckelmann <eckelmann@cosmocode.de>
+ * @author Yaroslav Vorozhko <yaroslav@ivinco.com>
  */
 
 if(!defined('DOKU_INC')) die();

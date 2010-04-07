@@ -41,40 +41,46 @@ function getDocumentsByHeadings($id, $metadata)
 
 function getSection($id, $header)
 {
-    // Create the parser
-    $Parser = & new Doku_Parser();
+    static $cacheInstructions = null;
+    static $cacheDoc = null;
 
-    // Add the Handler
-    $Parser->Handler = & new Doku_Handler();
+    if (!isset($cacheDoc[$id])){
+        // Create the parser
+        $Parser = & new Doku_Parser();
 
-    // Load the header mode to find headers
-    $Parser->addMode('header',new Doku_Parser_Mode_Header());
+        // Add the Handler
+        $Parser->Handler = & new Doku_Handler();
 
-    // Load the modes which could contain markup that might be
-    // mistaken for a header
-    $Parser->addMode('listblock',new Doku_Parser_Mode_ListBlock());
-    $Parser->addMode('preformatted',new Doku_Parser_Mode_Preformatted());
-    $Parser->addMode('table',new Doku_Parser_Mode_Table());
-    $Parser->addMode('unformatted',new Doku_Parser_Mode_Unformatted());
-    $Parser->addMode('php',new Doku_Parser_Mode_PHP());
-    $Parser->addMode('html',new Doku_Parser_Mode_HTML());
-    $Parser->addMode('code',new Doku_Parser_Mode_Code());
-    $Parser->addMode('file',new Doku_Parser_Mode_File());
-    $Parser->addMode('quote',new Doku_Parser_Mode_Quote());
-    $Parser->addMode('footnote',new Doku_Parser_Mode_Footnote());
-    $Parser->addMode('internallink',new Doku_Parser_Mode_InternalLink());
-    $Parser->addMode('media',new Doku_Parser_Mode_Media());
-    $Parser->addMode('externallink',new Doku_Parser_Mode_ExternalLink());
-    $Parser->addMode('windowssharelink',new Doku_Parser_Mode_WindowsShareLink());
-    $Parser->addMode('filelink',new Doku_Parser_Mode_FileLink());
+        // Load the header mode to find headers
+        $Parser->addMode('header',new Doku_Parser_Mode_Header());
 
-    // Loads the raw wiki document
-    $doc = io_readFile(wikiFN($id));
+        // Load the modes which could contain markup that might be
+        // mistaken for a header
 
-    // Get a list of instructions
-    $instructions = $Parser->parse($doc);
+        // Loads the raw wiki document
+        $doc = io_readFile(wikiFN($id));
 
-    unset($Parser);
+        // Get a list of instructions
+        $instructions = $Parser->parse($doc);
+
+        unset($Parser->Handler);
+        unset($Parser);
+
+        //free old cache
+        unset($cacheInstructions);
+        unset($cacheDoc);
+
+        //initialize new cache
+        $cacheInstructions[$id] = &$instructions;
+        $cacheDoc[$id] = &$doc;
+    } else {
+        $instructions = $cacheInstructions[$id];
+        $doc = $cacheDoc[$id];
+    }
+
+    
+
+    
 
     // Use this to watch when we're inside the section we want
     $inSection = FALSE;

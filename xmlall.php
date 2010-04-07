@@ -46,6 +46,7 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 ';
 
 $pageMapper = new PageMapper();
+$counter = 0;
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
     resolve_pageid('',$page,$exists);
@@ -55,6 +56,7 @@ foreach($pagesList as $row){
     //get meta data
     $metadata = p_get_metadata($dokuPageId);
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
+    
     if (!empty($sections)){
         foreach($sections as $hid => $section){
             //parse meta data for headers, abstract, date, authors
@@ -68,6 +70,7 @@ foreach($pagesList as $row){
 
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $section['title'], $hid);
+            $counter++;
         }
     } else {
         //parse meta data for headers, abstract, date, authors
@@ -81,7 +84,10 @@ foreach($pagesList as $row){
 
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title']);
+        $counter++;
     }
     
 }
 echo '</sphinx:docset>';
+echo $counter;
+echo "\n".number_format(memory_get_peak_usage()/1024)."K\n";

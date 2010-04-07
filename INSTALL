@@ -1,0 +1,26 @@
+* Requirments
+1. Sphinx Search with xmlpipe2 support
+2. Sqlite
+
+* Install
+1. unpack archive into lib/plugins direcotory of your wiki
+2. change directory to lib/plugins/sphinxsearch
+3. run first time Sphinx Search indexer
+   $indexer -c sphinx.conf dk_main
+4. after indexer will complete indexsation, run first time searchd,
+by default searchd port is 3313, so be sure this port is free
+   $searchd -c sphinx.conf
+5. Setup cronjob to periodically reindex your dokuwiki files
+
+* Troubleshooting
+1. PHP Allocate memory problem
+This plugin used dokuwiki page parser which used too much memory,
+so you can solve this problem by incresing you php memory settings:
+   1) through php.ini
+        memory_limit = 1024M
+   2) through php script
+        ini_set('memory_limit', '1024M');
+   3) through .htaccess file
+        php_value memory_limit "1024M"
+
+

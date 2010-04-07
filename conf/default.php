@@ -9,4 +9,5 @@ $conf['host']     = 'localhost';
 $conf['port']     = 3313;
 $conf['index']     = 'dk_main';
 $conf['maxresults'] = 10;
-
+$conf['snippetsize'] = 256;
+$conf['arroundwords'] = 5;

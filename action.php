@@ -75,17 +75,17 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
      * do the search and displays the result
      */
     function _search($query, $start) {
+        global $conf;
 
         $start = (int) $start;
         if($start < 0) $start = 0;
 
         $categories = $this->_getCategories($query);        
-        $keywords = $this->_getKeywords($query);
-
-	// backup the config array
-	$cp = $conf;
+        $keywords = $this->_getKeywords($query);	
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
+        $search->setSnippetSize($this->getConf('snippetsize'));
+        $search->setArroundWordsCount($this->getConf('arroundwords'));
         $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
         
         $totalFound = $search->getTotalFound();

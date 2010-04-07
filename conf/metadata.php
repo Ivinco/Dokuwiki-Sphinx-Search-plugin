@@ -8,4 +8,6 @@ $meta['host']     = array('string');
 $meta['port']     = array('numeric');
 $meta['index']     = array('string');
 $meta['maxresults'] = array('numeric');
+$conf['snippetsize'] = array('numeric');
+$conf['arroundwords'] = array('numeric');
 

@@ -10,6 +10,9 @@ class SphinxSearch
     private $_result = array();
     private $_index = null;
     private $_query = '';
+    private $_snippetSize = 256;
+    private $_aroundKeyword = 5;
+    
     public function  __construct($host, $port, $index)
     {
         $this->_sphinx = new SphinxClient();
@@ -82,7 +85,12 @@ class SphinxSearch
 
     public function getExcerpt($data, $query)
     {
-        return $this->_sphinx->BuildExcerpts($data, $this->_index, $query);
+        return $this->_sphinx->BuildExcerpts($data, $this->_index, $query,
+                    array(
+                        'limit' => $this->_snippetSize,
+                        'around' => $this->_aroundKeyword
+                    )
+                );
     }
 
     public function starQuery($query)
@@ -98,5 +106,15 @@ class SphinxSearch
     public function getQuery()
     {
         return $this->_query;
+    }
+
+    public function setSnippetSize($symbols = 256)
+    {
+        $this->_snippetSize = $symbols;
+    }
+
+    public function setArroundWordsCount($words = 5)
+    {
+        $this->_aroundKeyword = $words;
     }
 }

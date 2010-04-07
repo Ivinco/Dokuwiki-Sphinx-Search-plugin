@@ -79,11 +79,14 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $start = (int) $start;
         if($start < 0) $start = 0;
 
+        $categories = $this->_getCategories($query);        
+        $keywords = $this->_getKeywords($query);
+
 	// backup the config array
 	$cp = $conf;
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
-        $pagesList = $search->search($query, $start, $this->getConf('maxresults'));
+        $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
         
         $totalFound = $search->getTotalFound();
         if(!$totalFound){
@@ -107,7 +110,6 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
         echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
 	echo '<div class="search_result">';
-        $queryString = $_SERVER['QUERY_STRING'];
         // printout the results
 	foreach ($pagesList as $crc => $row) {
             $id = $row['page'];
@@ -124,7 +126,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             if (empty($title)){
                 $title = hsc($id);
             }
-            $namespaces = getNsLinks($id, $query, $search, $queryString);
+            $namespaces = getNsLinks($id, $keywords, $search);
             $href = !empty($hid) ? (wl($id).'#'.$hid) : wl($id);
 
             echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';
@@ -183,6 +185,26 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
           print '<input type="submit" value="'.$lang['btn_search'].'" class="button" title="'.$lang['btn_search'].'" />';
           print '</div></form>';
           return true;
+    }
+
+    function _getCategories($query)
+    {
+        $categories = '';
+        $query = urldecode($query);
+        if (false !== ($pos = strpos($query, "@categories"))){;
+            $categories = substr($query, $pos + strlen("@categories"));
+        }
+        return trim($categories);
+    }
+
+    function _getKeywords($query)
+    {
+        $keywords = $query;
+        $query = urldecode($query);
+        if (false !== ($pos = strpos($query, "@categories"))){;
+            $keywords = substr($keywords, 0, $pos);
+        } 
+        return trim($keywords);
     }
 }
 

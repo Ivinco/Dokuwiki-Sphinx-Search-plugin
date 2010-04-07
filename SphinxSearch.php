@@ -9,6 +9,7 @@ class SphinxSearch
     private $_sphinx = null;
     private $_result = array();
     private $_index = null;
+    private $_query = '';
     public function  __construct($host, $port, $index)
     {
         $this->_sphinx = new SphinxClient();
@@ -20,9 +21,16 @@ class SphinxSearch
         $this->_index = $index;
     }
 
-    public function search($query, $start, $resultsPerPage = 10)
+    public function search($keywords, $categories, $start, $resultsPerPage = 10)
     {        
         $this->_sphinx->SetLimits($start, $resultsPerPage);
+        $query = '';
+        if (!empty($keywords) && empty($categories)){
+            $query = "@(body,title,categories) {$keywords}";
+        } else {
+            $query = "@(body,title) {$keywords} @categories ".$categories;
+        }
+        $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);
         $this->_result = $res;
         if (empty($res['matches'])) {
@@ -49,7 +57,7 @@ class SphinxSearch
             $category[$crc] = $pagesIds[$crc]['page'];
         }
 
-        $starQuery = $this->starQuery($query);
+        $starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $starQuery);
         $titleExcerpt = $this->getExcerpt($title, $starQuery);
         $i = 0;
@@ -85,5 +93,10 @@ class SphinxSearch
             $starQuery .= "*".$word."* ";
         }
         return $starQuery;
+    }
+
+    public function getQuery()
+    {
+        return $this->_query;
     }
 }

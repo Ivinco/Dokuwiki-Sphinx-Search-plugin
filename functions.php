@@ -153,22 +153,12 @@ function getCategories($id)
     return $data;
 }
 
-function getNsLinks($id, $query, $search, $queryString)
+function getNsLinks($id, $keywords, $search)
 {
     global $conf;
     $parts = explode(':', $id);
     $count = count($parts);
-
-    $queryStringValue = $queryString;
-
-    if (false !== ($pos = strpos($queryStringValue, "+%40categories"))){;
-        $queryStringValue = substr($queryStringValue, 0, $pos);
-    }
-
-    if (false !== ($pos = strpos($queryStringValue, " @categories"))){;
-        $queryStringValue = substr($queryStringValue, 0, $pos);
-    }
-
+    
     // print intermediate namespace links
     $part = '';
     $data = array();
@@ -177,23 +167,20 @@ function getNsLinks($id, $query, $search, $queryString)
         $part .= $parts[$i].':';
         $page = $part;
         resolve_pageid('',$page,$exists);
-        if (preg_match("#:start$#", $page)) {
+
+        if (preg_match("#:start$#", $page) && !preg_match("#:start:$#", $part)) {
             $page = substr($page, 0, strpos($page, ":start"));
         }; 
 
         // output
         if ($exists){
-            //$titles[wl($page)] = useHeading('navigation') ? p_get_first_heading($page) : $page;
-            if(!$titles[wl($page)]) {
-                $titles[wl($page)] = $parts[$i];
-            }
+            $titles[wl($page)] = $parts[$i];
         } else {
             continue; //Skip not exists pages
-            //$titles[wl($page)] = $parts[$i];
-        }      
-        $data[] = array('link' => '?'. $queryStringValue . urlencode(" @categories $page"));
+        }
+        $data[] = array('link' => "?do=sphinxsearch&id={$keywords}".urlencode(" @categories $page"));
     }
-    $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($query));
+    $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($keywords));
     $i = 0;
     foreach ($data as $key => $notused){
         $data[$key]['title'] = $titleExcerpt[$i++];

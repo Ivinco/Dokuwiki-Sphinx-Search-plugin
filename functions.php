@@ -165,6 +165,10 @@ function getNsLinks($id, $query, $search, $queryString)
         $queryStringValue = substr($queryStringValue, 0, $pos);
     }
 
+    if (false !== ($pos = strpos($queryStringValue, " @categories"))){;
+        $queryStringValue = substr($queryStringValue, 0, $pos);
+    }
+
     // print intermediate namespace links
     $part = '';
     $data = array();

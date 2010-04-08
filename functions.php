@@ -44,7 +44,7 @@ function getSection($id, $header)
     static $cacheInstructions = null;
     static $cacheDoc = null;
 
-    if (!isset($cacheDoc[$id])){
+    if (empty($cacheDoc[$id])){
         // Create the parser
         $Parser = & new Doku_Parser();
 
@@ -53,9 +53,7 @@ function getSection($id, $header)
 
         // Load the header mode to find headers
         $Parser->addMode('header',new Doku_Parser_Mode_Header());
-
-        // Load the modes which could contain markup that might be
-        // mistaken for a header
+        $Parser->addMode('listblock',new Doku_Parser_Mode_ListBlock());
 
         // Loads the raw wiki document
         $doc = io_readFile(wikiFN($id));
@@ -67,18 +65,16 @@ function getSection($id, $header)
         unset($Parser);
 
         //free old cache
-        unset($cacheInstructions);
-        unset($cacheDoc);
+        $cacheInstructions = null;
+        $cacheDoc = null;
 
         //initialize new cache
-        $cacheInstructions[$id] = &$instructions;
-        $cacheDoc[$id] = &$doc;
+        $cacheInstructions[$id] = $instructions;
+        $cacheDoc[$id] = $doc;
     } else {
         $instructions = $cacheInstructions[$id];
         $doc = $cacheDoc[$id];
-    }
-
-    
+    }    
 
     
 
@@ -182,7 +178,7 @@ function getNsLinks($id, $keywords, $search)
         if ($exists){
             $titles[wl($page)] = $parts[$i];
         } else {
-            continue; //Skip not exists pages
+            $titles[wl($page)] = $parts[$i];
         }
         $data[] = array('link' => "?do=sphinxsearch&id={$keywords}".urlencode(" @categories $page"));
     }

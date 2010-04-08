@@ -136,13 +136,16 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             $sep=':';
             $i = 0;
             echo '<span class="search_nmsp">';
-            foreach ($namespaces as $row){
-                $link = $row['link'];
-                $pageTitle = $row['title'];
+            foreach ($namespaces as $name){
+                $link = $name['link'];
+                $pageTitle = $name['title'];
                 tpl_link($link, $pageTitle);
                 if ($i++ < count($namespaces)-1){
                     echo $sep;
                 }
+            }
+            if (!empty($hid)){
+                echo '#'.$hid;
             }
             echo '</span>';
             echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';

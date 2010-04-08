@@ -58,7 +58,7 @@ class SphinxSearch
             $body[$crc] = strip_tags($bodyHtml);
             $title[$crc] = strip_tags($pagesIds[$crc]['title']);
             $category[$crc] = $pagesIds[$crc]['page'];
-        }
+        }        
 
         $starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $starQuery);

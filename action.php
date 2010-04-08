@@ -86,6 +86,10 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
         $search->setSnippetSize($this->getConf('snippetsize'));
         $search->setArroundWordsCount($this->getConf('arroundwords'));
+        $search->setTitlePriority($this->getConf('title_priority'));
+        $search->setBodyPriority($this->getConf('body_priority'));
+        $search->setCategoriesPriority($this->getConf('categories_priority'));
+        
         $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
         
         $totalFound = $search->getTotalFound();
@@ -112,24 +116,27 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 	echo '<div class="search_result">';
         // printout the results
 	foreach ($pagesList as $crc => $row) {
-            $id = $row['page'];
+            $page = $row['page'];
             $bodyExcerpt = $row['bodyExcerpt'];
-            $titleExcerpt = $row['titleExcerpt'];
+            $titleTextExcerpt = $row['titleTextExcerpt'];
             $hid = $row['hid'];
-            $metaData = p_get_metadata($id);
-            if (!empty($titleExcerpt)){
-                $title = $titleExcerpt;
+
+            $metaData = p_get_metadata($page);
+
+            if (!empty($titleTextExcerpt)){
+                $titleText = $titleTextExcerpt;
+            } elseif(!empty($row['title_text'])){
+                $titleText = $row['title_text'];
+            } elseif(!empty($metaData['title'])){
+                $titleText = hsc($metaData['title']);
             } else {
-                $title = hsc($metaData['title']);
+                $titleText = hsc($page);
             }
             
-            if (empty($title)){
-                $title = hsc($id);
-            }
-            $namespaces = getNsLinks($id, $keywords, $search);
-            $href = !empty($hid) ? (wl($id).'#'.$hid) : wl($id);
+            $namespaces = getNsLinks($page, $keywords, $search);
+            $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
 
-            echo '<a href="'.$href.'" title="" class="wikilink1">'.$title.'</a><br/>';
+            echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
             echo '<div class="search_snippet">';
             echo strip_tags($bodyExcerpt, '<b>,<strong>');
             echo '</div>';

@@ -29,12 +29,20 @@ function getDocumentsByHeadings($id, $metadata)
     if (empty($metadata) || empty($metadata['description']['tableofcontents'])) return false;
 
     $sections = array();
+    $level = 1;
+    $previouse_title = '';
     foreach($metadata['description']['tableofcontents'] as $row){
         $sections[$row['hid']] = array(
                                     'section' => getSection($id, $row['title']),
-                                    'title' => $row['title'],
-                                    'level' => $row['level']
+                                    'level' => $row['level'],
+                                    'title' => $row['title']
                                     );
+        if ($row['level'] > $level){
+            $sections[$row['hid']]['title_text'] = $previouse_title . " &raquo; ".$row['title'];
+        } else {
+            $sections[$row['hid']]['title_text'] = $row['title'];
+            $previouse_title = $row['title'];
+        }
     }
     return $sections;
 }

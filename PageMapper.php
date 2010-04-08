@@ -17,18 +17,25 @@ class PageMapper
         if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {
             $q = @$db->query("SELECT 1 FROM {$this->_table} limit 1");
             if ($q === false) {
-                $db->query("CREATE TABLE {$this->_table} (page varchar(1024), page_crc int(11), hid varchar(1024), title varchar (1024), unique index a on pages(page, page_crc))");
+                $result = $db->query("CREATE TABLE {$this->_table} ( page varchar(1024), page_crc int(11), hid varchar(1024), title_text varchar(1024), title varchar(1024), unique (page, page_crc))");
+                if (!$result) {
+                    echo "\nPDO::errorInfo():\n";
+                    print_r($db->errorInfo());
+                    exit;
+                }
+
             }
         }
         $this->_db = $db;
     }
 
-    public function add($page, $title = '', $hid='')
+    public function add($page, $title_text, $title, $hid='')
     {
-        $result = $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title) values(".$this->_db->quote($page).",
+        $result = $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title, title_text) values(".$this->_db->quote($page).",
                                     '".crc32($page.$hid)."',
                                     ".$this->_db->quote($hid).",
-                                    ".$this->_db->quote($title).")");
+                                    ".$this->_db->quote($title).",
+                                    ".$this->_db->quote($title_text).")");
         if (!$result) {
             //echo "\nPDO::errorInfo():\n";
             //print_r($this->_db->errorInfo());
@@ -49,7 +56,7 @@ class PageMapper
         
         $pages = array();
         foreach($rows as $row){
-            $pages[$row['page_crc']] = array('page' => $row['page'], 'hid' => $row['hid'], 'title' => $row['title']);
+            $pages[$row['page_crc']] = array('page' => $row['page'], 'hid' => $row['hid'], 'title' => $row['title'], 'title_text' => $row['title_text']);
         }
         return $pages;
     }

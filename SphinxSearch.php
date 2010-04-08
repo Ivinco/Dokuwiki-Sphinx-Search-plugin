@@ -10,22 +10,27 @@ class SphinxSearch
     private $_result = array();
     private $_index = null;
     private $_query = '';
+
     private $_snippetSize = 256;
     private $_aroundKeyword = 5;
+
+    private $_titlePriority = 20;
+    private $_bodyPriority = 5;
+    private $_categoriesPriority = 10;
     
     public function  __construct($host, $port, $index)
     {
         $this->_sphinx = new SphinxClient();
         $this->_sphinx->SetServer($host, $port);
-        $this->_sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);
-        $this->_sphinx->SetFieldWeights(array('categories' => 5, 'title' => 20, 'body' => 3));
-        $this->_sphinx->SetFilter('level', array(1));
+        $this->_sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);        
 
         $this->_index = $index;
     }
 
     public function search($keywords, $categories, $start, $resultsPerPage = 10)
-    {        
+    {
+        $this->_sphinx->SetFieldWeights(array('categories' => $this->_categoriesPriority, 'title' => $this->_titlePriority, 'body' => $this->_bodyPriority));
+
         $this->_sphinx->SetLimits($start, $resultsPerPage);
         $query = '';
         if (!empty($keywords) && empty($categories)){
@@ -47,7 +52,7 @@ class SphinxSearch
 
         $pagesList = array();
         $body = array();
-        $title = array();
+        $titleText = array();
         $category = array();
         foreach ($pageCrcList as $crc){
             if (!empty($pagesIds[$crc]['hid'])){
@@ -56,22 +61,23 @@ class SphinxSearch
                 $bodyHtml = p_wiki_xhtml($pagesIds[$crc]['page']);
             }
             $body[$crc] = strip_tags($bodyHtml);
-            $title[$crc] = strip_tags($pagesIds[$crc]['title']);
+            $titleText[$crc] = strip_tags($pagesIds[$crc]['title_text']);
             $category[$crc] = $pagesIds[$crc]['page'];
         }        
 
         $starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $starQuery);
-        $titleExcerpt = $this->getExcerpt($title, $starQuery);
+        $titleTextExcerpt = $this->getExcerpt($titleText, $starQuery);
         $i = 0;
         $results = array();
         foreach($body as $crc => $notused){
             $results[$crc] = array(
                 'page' => $pagesIds[$crc]['page'],
                 'bodyExcerpt' => $bodyExcerpt[$i],
-                'titleExcerpt' => $titleExcerpt[$i],
+                'titleTextExcerpt' => $titleTextExcerpt[$i],
                 'hid' => $pagesIds[$crc]['hid'],
-                'title' => $pagesIds[$crc]['title']
+                'title' => $pagesIds[$crc]['title'],
+                'title_text' => $pagesIds[$crc]['title_text']
             );
             $i++;
         }
@@ -116,5 +122,20 @@ class SphinxSearch
     public function setArroundWordsCount($words = 5)
     {
         $this->_aroundKeyword = $words;
+    }
+
+    public function setTitlePriority($priority)
+    {
+        $this->_titlePriority = $priority;
+    }
+
+    public function setBodyPriority($priority)
+    {
+        $this->_bodyPriority = $priority;
+    }
+
+    public function setCategoriesPriority($priority)
+    {
+        $this->_categoriesPriority = $priority;
     }
 }

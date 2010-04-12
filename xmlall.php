@@ -89,5 +89,9 @@ foreach($pagesList as $row){
     
 }
 echo '</sphinx:docset>';
-/*echo $counter;
-echo "\n".number_format(memory_get_peak_usage()/1024)."K\n";*/
+
+/*
+echo $counter;
+echo "\n".number_format(memory_get_peak_usage()/1024)."K\n";
+ * 
+ */

@@ -34,7 +34,6 @@ function getDocumentsByHeadings($id, $metadata)
     foreach($metadata['description']['tableofcontents'] as $row){
         $sections[$row['hid']] = array(
                                     'section' => getSectionByTitleLevel($id, $row['title']),
-                                    //'section' => getSection($id, $row['title']),
                                     'level' => $row['level'],
                                     'title' => $row['title']
                                     );
@@ -44,14 +43,11 @@ function getDocumentsByHeadings($id, $metadata)
             $sections[$row['hid']]['title_text'] = $row['title'];
             $previouse_title = $row['title'];
         }
-        //echo $sections[$row['hid']]['title_text']."\n";
-        //echo $sections[$row['hid']]['section'];
     }
-    //exit;
     return $sections;
 }
 
-function getSectionByTitleLevel($id, $header)
+function getSectionByTitleLevel($id, $header, $extended=false)
 {
     $headerReg = preg_quote($header, '/');
     $doc = io_readFile(wikiFN($id));
@@ -76,8 +72,9 @@ function getSectionByTitleLevel($id, $header)
         }        
     }
     $section = trim($section);
-    //trying to get next section content if body for first section found
-    if (!$section){
+    //trying to get next section content if body for first section is empty
+    //working only for extended mode
+    if ($extended && empty($section)){
         $startHeaderPos = $endHeaderPos + strlen($endHeader);
         $endDoc = substr($endDoc, $startHeaderPos);
         $regex = '(={1,6})(.*?)(={1,6})';
@@ -93,6 +90,7 @@ function getSectionByTitleLevel($id, $header)
             $section = substr($doc, $startHeaderPos);
         }
     }
+    $section = trim($section);
     return $section;
 }
 

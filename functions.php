@@ -33,7 +33,8 @@ function getDocumentsByHeadings($id, $metadata)
     $previouse_title = '';
     foreach($metadata['description']['tableofcontents'] as $row){
         $sections[$row['hid']] = array(
-                                    'section' => getSection($id, $row['title']),
+                                    'section' => getSectionByTitleLevel($id, $row['title']),
+                                    //'section' => getSection($id, $row['title']),
                                     'level' => $row['level'],
                                     'title' => $row['title']
                                     );
@@ -43,8 +44,56 @@ function getDocumentsByHeadings($id, $metadata)
             $sections[$row['hid']]['title_text'] = $row['title'];
             $previouse_title = $row['title'];
         }
+        //echo $sections[$row['hid']]['title_text']."\n";
+        //echo $sections[$row['hid']]['section'];
     }
+    //exit;
     return $sections;
+}
+
+function getSectionByTitleLevel($id, $header)
+{
+    $headerReg = preg_quote($header, '/');
+    $doc = io_readFile(wikiFN($id));
+    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";
+    $section = '';
+    if (preg_match("/$regex/i",$doc,$matches)) {
+        $startHeader = $matches[0];
+        $startHeaderPos = strpos($doc, $startHeader) + strlen($startHeader);
+        $endDoc = substr($doc, $startHeaderPos);
+
+        $regex = '(={1,6})(.*?)(={1,6})';
+        if (preg_match("/$regex/i",$endDoc,$matches)) {
+            $endHeader = $matches[0];
+            $endHeaderPos = strpos($doc, $endHeader);
+        } else {
+            $endHeaderPos = 0;
+        }
+        if ($endHeaderPos){
+            $section = substr($doc, $startHeaderPos, $endHeaderPos - $startHeaderPos);
+        } else {
+            $section = substr($doc, $startHeaderPos);
+        }        
+    }
+    $section = trim($section);
+    //trying to get next section content if body for first section found
+    if (!$section){
+        $startHeaderPos = $endHeaderPos + strlen($endHeader);
+        $endDoc = substr($endDoc, $startHeaderPos);
+        $regex = '(={1,6})(.*?)(={1,6})';
+        if (preg_match("/$regex/i",$endDoc,$matches)) {
+            $endHeader = $matches[0];
+            $endHeaderPos = strpos($doc, $endHeader);
+        } else {
+            $endHeaderPos = 0;
+        }
+        if ($endHeaderPos){
+            $section = substr($doc, $startHeaderPos, $endHeaderPos - $startHeaderPos);
+        } else {
+            $section = substr($doc, $startHeaderPos);
+        }
+    }
+    return $section;
 }
 
 function getSection($id, $header)

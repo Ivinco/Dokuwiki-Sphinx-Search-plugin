@@ -56,7 +56,7 @@ class SphinxSearch
         $category = array();
         foreach ($pageCrcList as $crc){
             if (!empty($pagesIds[$crc]['hid'])){
-                $bodyHtml = p_render('xhtml',p_get_instructions(getSection($pagesIds[$crc]['page'], $pagesIds[$crc]['title'])),$info);
+                $bodyHtml = p_render('xhtml',p_get_instructions(getSectionByTitleLevel($pagesIds[$crc]['page'], $pagesIds[$crc]['title'])),$info);
             } else {
                 $bodyHtml = p_wiki_xhtml($pagesIds[$crc]['page']);
             }

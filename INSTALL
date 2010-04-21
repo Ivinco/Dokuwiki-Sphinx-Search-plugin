@@ -1,27 +1,30 @@
 * Requirments
-1. Sphinx Search with xmlpipe2 support
-2. Sqlite
+1. Sphinx Search (www.sphinxsearch.com)
+2. SQLite (Plus the PHP SQLite extension. It is enabled by default as of PHP 5.)
 
-* Install
-1. unpack archive into lib/plugins direcotory of your wiki
-2. change directory to lib/plugins/sphinxsearch
-3. run first time Sphinx Search indexer from the root of sphinxsearch plugin directory
+
+* Installation
+1. Download latest sphinxsearch plugin package and unpack it into lib/plugins direcotory of your DokuWiki installation.
+2. Run Sphinx Search indexer to index your DokuWiki data for the first time. Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
+   $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
    $indexer -c sphinx.conf dk_main
-4. after indexer will complete indexsation, run first time searchd,
-by default searchd port is 3313, so be sure this port is free
+3. After indexer completes it's job, run searchd, e.g.:
    $searchd -c sphinx.conf
-5. Setup cronjob to periodically reindex your dokuwiki files. 
-    1 10 * * * root /path/to/plugin/indexer.php
+   By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #6).
+4. Change the {Your_DokuWiki_Path}/tpl/default/main.php - locate the "tpl_searchform()" php function and replace it with "action_plugin_sphinxsearch::searchform()". 
+5. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki files, e.g.: 
+    1 10 * * * root {Your_DokuWiki_Path}/lib/plugin/sphinxsearch/indexer.php
+6. You can fine-tune the search behavior by editing the configuration file conf/default.php
 
 
 * Troubleshooting
-1. PHP Allocate memory problem
-You can solve this problem by incresing you php memory settings:
-   1) through php.ini
+1. PHP allocate memory problem.
+This is solved by increasing PHP memory limit - you can use one of the following ways:
+   a) through php.ini
         memory_limit = 1024M
-   2) through php script
+   b) through php script
         ini_set('memory_limit', '1024M');
-   3) through .htaccess file
+   c) through .htaccess file
         php_value memory_limit "1024M"
 
 

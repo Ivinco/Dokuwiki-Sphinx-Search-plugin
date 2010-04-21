@@ -5,12 +5,14 @@
 * Install
 1. unpack archive into lib/plugins direcotory of your wiki
 2. change directory to lib/plugins/sphinxsearch
-3. run first time Sphinx Search indexer
+3. run first time Sphinx Search indexer from the root of sphinxsearch plugin directory
    $indexer -c sphinx.conf dk_main
 4. after indexer will complete indexsation, run first time searchd,
 by default searchd port is 3313, so be sure this port is free
    $searchd -c sphinx.conf
-5. Setup cronjob to periodically reindex your dokuwiki files.
+5. Setup cronjob to periodically reindex your dokuwiki files. 
+    1 10 * * * root /path/to/plugin/indexer.php
+
 
 * Troubleshooting
 1. PHP Allocate memory problem

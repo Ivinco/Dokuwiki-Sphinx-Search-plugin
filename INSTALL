@@ -1,10 +1,10 @@
-* Requirments
+* Requirements
 1. Sphinx Search (www.sphinxsearch.com)
 2. SQLite (Plus the PHP SQLite extension. It is enabled by default as of PHP 5.)
 
 
 * Installation
-1. Download latest sphinxsearch plugin package and unpack it into lib/plugins direcotory of your DokuWiki installation.
+1. Download latest sphinxsearch plugin package and unpack it into lib/plugins directory of your DokuWiki installation.
 2. Run Sphinx Search indexer to index your DokuWiki data for the first time. Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
    $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
    $indexer -c sphinx.conf dk_main

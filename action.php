@@ -33,41 +33,22 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
      * register the eventhandlers
      */
     function register(&$controller){
-        $controller->register_hook('ACTION_ACT_PREPROCESS',
-                                   'BEFORE',
-                                   $this,
-                                   'handle_act_preprocess',
-                                   array());
-
-        $controller->register_hook('TPL_ACT_UNKNOWN',
-                                   'BEFORE',
-                                   $this,
-                                   'handle_act_unknown',
-                                   array());
-    }
-
-    /**
-     * Checks if 'googlesearch' was given as action, if so we
-     * do handle the event our self and no further checking takes place
-     */
-    function handle_act_preprocess(&$event, $param){        
-        if($event->data != 'sphinxsearch') return; // nothing to do for us
-
-        $event->stopPropagation(); // this is our very own action, no need to check other plugins
-        $event->preventDefault();  // we handle it our self, thanks
+        $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());
     }
 
     /**
      * If our own 'googlesearch' action was given we produce our content here
      */
     function handle_act_unknown(&$event, $param){
-        if($event->data != 'sphinxsearch') return; // nothing to do for us
+        global $ACT;
+        global $QUERY;
+        if($ACT != 'search') return; // nothing to do for us
 
         // we can handle it -> prevent others
         $event->stopPropagation();
         $event->preventDefault();
 
-        global $QUERY;
+        
         $this->_search($QUERY,$_REQUEST['start']);
     }    
 
@@ -93,89 +74,90 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
         
         $totalFound = $search->getTotalFound();
-        if(!$totalFound){
+        if(empty($pagesList)){
             echo '<b>Nothing was found by ' . $query . '</b>!';
-            exit;
-        }
-        echo '<style type="text/css">
-            div.dokuwiki .search_snippet{
-                color:#000000;
-                margin-left:0px;
-            }
-            div.dokuwiki .search_cnt{
-                color:#CCCCCC;
-                font-size: 10px;
-            }
-            div.dokuwiki .search_nmsp{
-                font-size: 10px;
-            }
-            </style>
-            ';
-
-        echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
-	echo '<div class="search_result">';
-        // printout the results
-	foreach ($pagesList as $crc => $row) {
-            $page = $row['page'];
-            $bodyExcerpt = $row['bodyExcerpt'];
-            $titleTextExcerpt = $row['titleTextExcerpt'];
-            $hid = $row['hid'];
-
-            $metaData = p_get_metadata($page);
-
-            if (!empty($titleTextExcerpt)){
-                $titleText = $titleTextExcerpt;
-            } elseif(!empty($row['title_text'])){
-                $titleText = $row['title_text'];
-            } elseif(!empty($metaData['title'])){
-                $titleText = hsc($metaData['title']);
-            } else {
-                $titleText = hsc($page);
-            }
-            
-            $namespaces = getNsLinks($page, $keywords, $search);
-            $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
-
-            echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
-            echo '<div class="search_snippet">';
-            echo strip_tags($bodyExcerpt, '<b>,<strong>');
-            echo '</div>';
-            $sep=':';
-            $i = 0;
-            echo '<span class="search_nmsp">';
-            foreach ($namespaces as $name){
-                $link = $name['link'];
-                $pageTitle = $name['title'];
-                tpl_link($link, $pageTitle);
-                if ($i++ < count($namespaces)-1){
-                    echo $sep;
+            return;
+        } else {
+            echo '<style type="text/css">
+                div.dokuwiki .search_snippet{
+                    color:#000000;
+                    margin-left:0px;
                 }
-            }
-            if (!empty($hid)){
-                echo '#'.$hid;
-            }
-            echo '</span>';
-            echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
-            echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
-            echo '<br />';echo '<br />';
-	}
-        echo '</div>';
-        echo '<div class="sphinxsearch_nav">';
-        if ($start > 1){
-            $prev = $start - $this->getConf('maxresults');
-            if($prev < 0) $prev = 0;
+                div.dokuwiki .search_cnt{
+                    color:#CCCCCC;
+                    font-size: 10px;
+                }
+                div.dokuwiki .search_nmsp{
+                    font-size: 10px;
+                }
+                </style>
+                ';
 
-            echo $this->external_link(wl('',array('do'=>'sphinxsearch','id'=>$query,'start'=>$prev),'false','&'),
-                                      'prev','wikilink1 gs_prev',$conf['target']['interwiki']);
-        }
-        echo ' ';
-        if($start + $this->getConf('maxresults') < $totalFound){
-            $next = $start + $this->getConf('maxresults');
+            echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
+            echo '<div class="search_result">';
+            // printout the results
+            foreach ($pagesList as $crc => $row) {
+                $page = $row['page'];
+                $bodyExcerpt = $row['bodyExcerpt'];
+                $titleTextExcerpt = $row['titleTextExcerpt'];
+                $hid = $row['hid'];
 
-            echo $this->external_link(wl('',array('do'=>'sphinxsearch','id'=>$query,'start'=>$next),'false','&'),
-                                      'next','wikilink1 gs_next',$conf['target']['interwiki']);
+                $metaData = p_get_metadata($page);
+
+                if (!empty($titleTextExcerpt)){
+                    $titleText = $titleTextExcerpt;
+                } elseif(!empty($row['title_text'])){
+                    $titleText = $row['title_text'];
+                } elseif(!empty($metaData['title'])){
+                    $titleText = hsc($metaData['title']);
+                } else {
+                    $titleText = hsc($page);
+                }
+
+                $namespaces = getNsLinks($page, $keywords, $search);
+                $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
+
+                echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
+                echo '<div class="search_snippet">';
+                echo strip_tags($bodyExcerpt, '<b>,<strong>');
+                echo '</div>';
+                $sep=':';
+                $i = 0;
+                echo '<span class="search_nmsp">';
+                foreach ($namespaces as $name){
+                    $link = $name['link'];
+                    $pageTitle = $name['title'];
+                    tpl_link($link, $pageTitle);
+                    if ($i++ < count($namespaces)-1){
+                        echo $sep;
+                    }
+                }
+                if (!empty($hid)){
+                    echo '#'.$hid;
+                }
+                echo '</span>';
+                echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
+                echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
+                echo '<br />';echo '<br />';
+            }
+            echo '</div>';
+            echo '<div class="sphinxsearch_nav">';
+            if ($start > 1){
+                $prev = $start - $this->getConf('maxresults');
+                if($prev < 0) $prev = 0;
+
+                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$prev),'false','&'),
+                                          'prev','wikilink1 gs_prev',$conf['target']['interwiki']);
+            }
+            echo ' ';
+            if($start + $this->getConf('maxresults') < $totalFound){
+                $next = $start + $this->getConf('maxresults');
+
+                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$next),'false','&'),
+                                          'next','wikilink1 gs_next',$conf['target']['interwiki']);
+            }
+            echo '</div>';
         }
-        echo '</div>';
         
     }
 
@@ -185,12 +167,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
           global $QUERY;
 
           // don't print the search form if search action has been disabled
-          if (!actionOk('sphinxsearch')) return false;
+          if (!actionOk('search')) return false;
 
           print '<form action="'.wl().'" accept-charset="utf-8" class="search" id="dw__search"><div class="no">';
-          print '<input type="hidden" name="do" value="sphinxsearch" />';
+          print '<input type="hidden" name="do" value="search" />';
           print '<input type="text" ';
-          if($ACT == 'sphinxsearch') print 'value="'.htmlspecialchars($QUERY).'" ';
+          if($ACT == 'search') print 'value="'.htmlspecialchars($QUERY).'" ';
           print 'id="qsearch__in" accesskey="f" name="id" class="edit" title="[ALT+F]" />';
           print '<input type="submit" value="'.$lang['btn_search'].'" class="button" title="'.$lang['btn_search'].'" />';
           print '</div></form>';

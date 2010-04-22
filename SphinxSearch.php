@@ -31,7 +31,7 @@ class SphinxSearch
     {
         $this->_sphinx->SetFieldWeights(array('categories' => $this->_categoriesPriority, 'title' => $this->_titlePriority, 'body' => $this->_bodyPriority));
 
-        $this->_sphinx->SetLimits($start, $resultsPerPage);
+        $this->_sphinx->SetLimits($start, $resultsPerPage+100);
         $query = '';
         if (!empty($keywords) && empty($categories)){
             $query = "@(body,title,categories) {$keywords}";
@@ -47,22 +47,25 @@ class SphinxSearch
 
         $pageMapper = new PageMapper();
 
-        $pageCrcList = array_keys($res['matches']);
-        $pagesIds = $pageMapper->getByCrc($pageCrcList);
+        $pagesIds = $pageMapper->getByCrc(array_keys($res['matches']), $resultsPerPage);
+        if (empty($pagesIds)){
+            
+            return false;
+        }
 
         $pagesList = array();
         $body = array();
         $titleText = array();
         $category = array();
-        foreach ($pageCrcList as $crc){
-            if (!empty($pagesIds[$crc]['hid'])){
-                $bodyHtml = p_render('xhtml',p_get_instructions(getSectionByTitleLevel($pagesIds[$crc]['page'], $pagesIds[$crc]['title'], true)),$info);
+        foreach ($pagesIds as $crc => $data){
+            if (!empty($data['hid'])){
+                $bodyHtml = p_render('xhtml',p_get_instructions(getSectionByTitleLevel($data['page'], $data['title'], true)),$info);
             } else {
-                $bodyHtml = p_wiki_xhtml($pagesIds[$crc]['page']);
+                $bodyHtml = p_wiki_xhtml($data['page']);
             }
             $body[$crc] = strip_tags($bodyHtml);
-            $titleText[$crc] = strip_tags($pagesIds[$crc]['title_text']);
-            $category[$crc] = $pagesIds[$crc]['page'];
+            $titleText[$crc] = strip_tags($data['title_text']);
+            $category[$crc] = $data['page'];
         }        
 
         $starQuery = $this->starQuery($keywords);

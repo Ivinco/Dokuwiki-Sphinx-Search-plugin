@@ -11,10 +11,9 @@
 3. After indexer completes it's job, run searchd, e.g.:
    $searchd -c sphinx.conf
    By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #6).
-4. Change the {Your_DokuWiki_Path}/tpl/default/main.php - locate the "tpl_searchform()" php function and replace it with "action_plugin_sphinxsearch::searchform()". 
-5. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki files, e.g.: 
+4. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki files, e.g.:
     1 10 * * * root {Your_DokuWiki_Path}/lib/plugin/sphinxsearch/indexer.php
-6. You can fine-tune the search behavior by editing the configuration file conf/default.php
+5. You can fine-tune the search behavior by editing the configuration file conf/default.php
 
 
 * Troubleshooting

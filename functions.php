@@ -235,7 +235,7 @@ function getNsLinks($id, $keywords, $search)
         } else {
             $titles[wl($page)] = $parts[$i];
         }
-        $data[] = array('link' => "?do=sphinxsearch&id={$keywords}".urlencode(" @categories $page"));
+        $data[] = array('link' => "?do=search&id={$keywords}".urlencode(" @categories $page"));
     }
     $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($keywords));
     $i = 0;

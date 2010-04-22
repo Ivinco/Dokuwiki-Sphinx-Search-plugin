@@ -50,7 +50,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
      * Checks if 'googlesearch' was given as action, if so we
      * do handle the event our self and no further checking takes place
      */
-    function handle_act_preprocess(&$event, $param){
+    function handle_act_preprocess(&$event, $param){        
         if($event->data != 'sphinxsearch') return; // nothing to do for us
 
         $event->stopPropagation(); // this is our very own action, no need to check other plugins
@@ -75,7 +75,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
      * do the search and displays the result
      */
     function _search($query, $start) {
-        global $conf;
+        global $conf;        
 
         $start = (int) $start;
         if($start < 0) $start = 0;

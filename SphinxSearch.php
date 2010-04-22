@@ -41,6 +41,7 @@ class SphinxSearch
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);
         $this->_result = $res;
+
         if (empty($res['matches'])) {
             return false;
 	}
@@ -85,6 +86,11 @@ class SphinxSearch
             $i++;
         }
         return $results;
+    }
+
+    public function getError()
+    {
+        return $this->_sphinx->GetLastError();
     }
 
     public function getTotalFound()

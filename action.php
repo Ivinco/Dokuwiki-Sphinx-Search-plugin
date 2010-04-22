@@ -72,6 +72,11 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $search->setCategoriesPriority($this->getConf('categories_priority'));
         
         $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
+
+        if ($search->getError()){
+            echo '<b>' . $search->getError() . '</b>!';
+            return;
+        }
         
         $totalFound = $search->getTotalFound();
         if(empty($pagesList)){

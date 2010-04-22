@@ -3,5 +3,5 @@ author  Yaroslav Vorozhko
 email 	yaroslav@ivinco.com
 date 	2010-03-31
 name 	SphinxSearch
-desc 	Replace the default search 
-url 	http://www.ivinco.com
+desc 	Replace the default search with Sphinx Search
+url 	http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/

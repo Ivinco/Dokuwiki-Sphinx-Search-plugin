@@ -1,29 +1,38 @@
-* Requirements
-1. Sphinx Search (www.sphinxsearch.com)
-2. SQLite (Plus the PHP SQLite extension. It is enabled by default as of PHP 5.)
+=== Requirements ===
+
+1. Sphinx Search (http://www.sphinxsearch.com/downloads.html)
+
+2. PHP5 with SQLite extension (it is enabled by default as of PHP 5)
 
 
-* Installation
-1. Download latest sphinxsearch plugin package and unpack it into lib/plugins directory of your DokuWiki installation.
-2. Run Sphinx Search indexer to index your DokuWiki data for the first time. Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
-   $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
-   $indexer -c sphinx.conf dk_main
-3. After indexer completes it's job, run searchd, e.g.:
-   $searchd -c sphinx.conf
-   By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #6).
-4. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki files, e.g.:
+=== Installation ===
+
+1. Unpack plugin files into lib/plugins directory of your DokuWiki installation.
+
+2. Run Sphinx Search indexer to index your DokuWiki data for the first time. 
+Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
+	$cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
+	$indexer -c sphinx.conf dk_main
+
+3. After indexer completes it's job, run searched, e.g.:
+	$searchd -c sphinx.conf
+By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #5).
+
+4. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki data, e.g.:
     1 10 * * * root {Your_DokuWiki_Path}/lib/plugin/sphinxsearch/indexer.php
+
 5. You can fine-tune the search behavior by editing the configuration file conf/default.php
 
 
-* Troubleshooting
-1. PHP allocate memory problem.
+=== Troubleshooting ===
+
+PHP allocate memory problem.
 This is solved by increasing PHP memory limit - you can use one of the following ways:
-   a) through php.ini
-        memory_limit = 1024M
-   b) through php script
-        ini_set('memory_limit', '1024M');
-   c) through .htaccess file
-        php_value memory_limit "1024M"
+	a) using php.ini
+		memory_limit = 1024M
+	b) inside php script
+		ini_set('memory_limit', '1024M');
+	c) using .htaccess file
+		php_value memory_limit "1024M"
 
 

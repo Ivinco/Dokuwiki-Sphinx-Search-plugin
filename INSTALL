@@ -14,7 +14,7 @@ Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
 	$cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
 	$indexer -c sphinx.conf dk_main
 
-3. After indexer completes it's job, run searched, e.g.:
+3. After indexer completes it's job, run searchd, e.g.:
 	$searchd -c sphinx.conf
 By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #5).
 

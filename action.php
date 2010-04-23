@@ -66,7 +66,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
         $search->setSnippetSize($this->getConf('snippetsize'));
-        $search->setArroundWordsCount($this->getConf('arroundwords'));
+        $search->setArroundWordsCount($this->getConf('aroundwords'));
         $search->setTitlePriority($this->getConf('title_priority'));
         $search->setBodyPriority($this->getConf('body_priority'));
         $search->setCategoriesPriority($this->getConf('categories_priority'));

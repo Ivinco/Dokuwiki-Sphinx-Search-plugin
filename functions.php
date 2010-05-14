@@ -12,7 +12,7 @@ function formatXml($data)
 <body><![CDATA[[{body}]]></body>
 <categories><![CDATA[[{categories}]]></categories>
 <level>{level}</level>
-<modified>{modified}</modified>
+<modified><![CDATA[[{modified}]]></modified>
 </sphinx:document>
 
 ';

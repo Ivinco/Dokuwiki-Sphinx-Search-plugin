@@ -18,7 +18,7 @@ function formatXml($data)
 ';
 
     return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}'),
-                        array($data['id'], html_strip($data['title']), html_strip($data['body']), html_strip($data['categories']),
+                        array($data['id'], strip_tags($data['title']), strip_tags($data['body']), strip_tags($data['categories']),
                              $data['level'], $data['modified']),
                 $xmlFormat
             );

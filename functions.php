@@ -51,7 +51,7 @@ function getSectionByTitleLevel($id, $header, $extended=false)
 {
     $headerReg = preg_quote($header, '/');
     $doc = io_readFile(wikiFN($id));
-    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";
+    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";    
     $section = '';
     if (preg_match("/$regex/i",$doc,$matches)) {
         $startHeader = $matches[0];

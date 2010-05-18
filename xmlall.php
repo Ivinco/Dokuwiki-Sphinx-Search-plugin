@@ -66,7 +66,7 @@ foreach($pagesList as $row){
             $data['level'] = $section['level'];
             $data['modified'] = $metadata['date']['modified'];
             $data['title'] = strip_tags($section['title_text']);
-            $data['body'] = strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
+            $data['body'] = $section['section']; //strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $section['title_text'], $section['title'], $hid);
@@ -80,7 +80,7 @@ foreach($pagesList as $row){
         $data['level'] = 1;
         $data['modified'] = $metadata['date']['modified'];
         $data['title'] = strip_tags($metadata['title']);
-        $data['body'] = strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+        $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
@@ -93,5 +93,4 @@ echo '</sphinx:docset>';
 /*
 echo $counter;
 echo "\n".number_format(memory_get_peak_usage()/1024)."K\n";
- * 
- */
+*/

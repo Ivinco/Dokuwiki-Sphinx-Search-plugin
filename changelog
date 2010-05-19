@@ -1,1 +1,5 @@
+Version 0.2
+ * Fixed bug with invalid characters in XML
+ * Fixed bug with parsing dokuwiki pages
+ * Fixed bug with memory leak, now it requires not more than 7Mb
 Version 0.1

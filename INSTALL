@@ -24,15 +24,4 @@ By default searchd port is 3313, so make sure this port is free (if you have sph
 5. You can fine-tune the search behavior by editing the configuration file conf/default.php
 
 
-=== Troubleshooting ===
-
-PHP allocate memory problem.
-This is solved by increasing PHP memory limit - you can use one of the following ways:
-	a) using php.ini
-		memory_limit = 1024M
-	b) inside php script
-		ini_set('memory_limit', '1024M');
-	c) using .htaccess file
-		php_value memory_limit "1024M"
-
 

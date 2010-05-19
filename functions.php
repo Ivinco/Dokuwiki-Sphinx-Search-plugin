@@ -58,7 +58,7 @@ function getSectionByTitleLevel($id, $header, $extended=false)
         $startHeaderPos = strpos($doc, $startHeader) + strlen($startHeader);
         $endDoc = substr($doc, $startHeaderPos);
 
-        $regex = '(={1,6})(.*?)(={1,6})';
+        $regex = '(={3,6})(.*?)(={3,6})';
         if (preg_match("/$regex/i",$endDoc,$matches)) {
             $endHeader = $matches[0];
             $endHeaderPos = strpos($doc, $endHeader);
@@ -77,7 +77,7 @@ function getSectionByTitleLevel($id, $header, $extended=false)
     if ($extended && empty($section)){
         $startHeaderPos = $endHeaderPos + strlen($endHeader);
         $endDoc = substr($endDoc, $startHeaderPos);
-        $regex = '(={1,6})(.*?)(={1,6})';
+        $regex = '(={3,6})(.*?)(={3,6})';
         if (preg_match("/$regex/i",$endDoc,$matches)) {
             $endHeader = $matches[0];
             $endHeaderPos = strpos($doc, $endHeader);

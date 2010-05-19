@@ -12,17 +12,59 @@ function formatXml($data)
 <body><![CDATA[[{body}]]></body>
 <categories><![CDATA[[{categories}]]></categories>
 <level>{level}</level>
-<modified><![CDATA[[{modified}]]></modified>
+<modified>{modified}</modified>
 </sphinx:document>
 
 ';
 
     return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}'),
-                        array($data['id'], strip_tags($data['title']), strip_tags($data['body']), strip_tags($data['categories']),
+                        array($data['id'], escapeTextValue($data['title']), escapeTextValue($data['body']), escapeTextValue($data['categories']),
                              $data['level'], $data['modified']),
                 $xmlFormat
             );
 }
+
+function escapeTextValue($value)
+{
+    if ("" === $value)
+    {
+        return "";
+    }
+    $value = mb_convert_encoding($value,'UTF-8','ISO-8859-1');
+    $value = strip_tags($value);
+    $value = stripInvalidXml($value);
+    return str_replace("]]>", "]]><![CDATA[]]]]><![CDATA[>]]><![CDATA[", $value);
+ }
+
+function stripInvalidXml($value)
+{
+    $ret = "";
+    if (empty($value))
+    {
+      return $ret;
+    }
+
+    $current = null;
+    $length = strlen($value);
+    for ($i=0; $i < $length; $i++)
+    {
+      $current = ord($value{$i});
+      if (($current == 0x9) ||
+          ($current == 0xA) ||
+          ($current == 0xD) ||
+          (($current >= 0x20) && ($current <= 0xD7FF)) ||
+          (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+          (($current >= 0x10000) && ($current <= 0x10FFFF)))
+      {
+        $ret .= chr($current);
+      }
+      else
+      {
+        $ret .= " ";
+      }
+    }
+    return $ret;
+  }
 
 function getDocumentsByHeadings($id, $metadata)
 {

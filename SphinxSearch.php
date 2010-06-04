@@ -133,6 +133,7 @@ class SphinxSearch
         $words = explode(" ", $query);
         $starQuery = '';
         foreach($words as $word){
+            $word = trim($word, "*");
             $starQuery .= "*".$word."* ";
         }
         return $starQuery;

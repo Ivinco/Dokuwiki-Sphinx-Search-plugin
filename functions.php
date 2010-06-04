@@ -286,3 +286,27 @@ function getNsLinks($id, $keywords, $search)
     }
     return $data;
 }
+
+function printNamespaces($query)
+{
+  $data = array();
+  $data = ft_pageLookup($query);
+
+  if(!count($data)) return;
+
+  print '<strong>'.$lang['quickhits'].'</strong>';
+  print '<ul>';
+  foreach($data as $id){
+    print '<li>';
+    $ns = getNS($id);
+    if($ns){
+      $name = shorten(noNS($id), ' ('.$ns.')',30);
+    }else{
+      $name = $id;
+    }
+    $href = ("?do=search&id={$query}".urlencode(" @categories {$id}"));
+    tpl_link($href,$id);
+    print '</li>';
+  }
+  print '</ul>';
+}

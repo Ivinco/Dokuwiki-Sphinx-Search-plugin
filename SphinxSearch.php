@@ -34,9 +34,11 @@ class SphinxSearch
         $this->_sphinx->SetLimits($start, $resultsPerPage+100);
         $query = '';
         if (!empty($keywords) && empty($categories)){
-            $query = "@(body,title,categories) {$keywords}";
+            $starCategory = $this->starQuery($keywords);
+            $query = "@(body,title) {$keywords} | @categories {$starCategory}";
         } else {
-            $query = "@(body,title) {$keywords} @categories ".$categories;
+            $starCategory = $this->starQuery($categories);
+            $query = "@(body,title,categories) {$keywords} @categories ".$starCategory;
         }
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);
@@ -48,9 +50,20 @@ class SphinxSearch
 
         $pageMapper = new PageMapper();
 
-        $pagesIds = $pageMapper->getByCrc(array_keys($res['matches']), $resultsPerPage);
-        if (empty($pagesIds)){
-            
+        $pagesIdsAll = $pageMapper->getByCrc(array_keys($res['matches']));
+        $this->_offset = 0;
+        $counter = 0;
+        foreach($pagesIdsAll as $id => $pageData){
+            $this->_offset++;
+            if(auth_quickaclcheck($pageData['page']) >= AUTH_READ){
+                $counter++;
+                $pagesIds[$id] = $pageData;
+                if ($counter == $resultsPerPage){
+                    break;
+                }
+            }             
+        }        
+        if (empty($pagesIds)){            
             return false;
         }
 
@@ -88,6 +101,11 @@ class SphinxSearch
         return $results;
     }
 
+    public function getOffset()
+    {
+        return $this->_offset;
+    }
+
     public function getError()
     {
         return $this->_sphinx->GetLastError();
@@ -103,7 +121,9 @@ class SphinxSearch
         return $this->_sphinx->BuildExcerpts($data, $this->_index, $query,
                     array(
                         'limit' => $this->_snippetSize,
-                        'around' => $this->_aroundKeyword
+                        'around' => $this->_aroundKeyword,
+                        'weight_order' => 1,
+                        'sp' => 1
                     )
                 );
     }

@@ -87,6 +87,26 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 div.dokuwiki .search_snippet{
                     color:#000000;
                     margin-left:0px;
+                    font-size: 13px;
+                }
+                div.dokuwiki .search_result{
+                    width:800px;
+                    float:left;
+                }
+                div.dokuwiki .search_sidebar{
+                    width:200px;
+                    float:right;
+                    margin-right: 30px;
+                }
+                div.dokuwiki .search_result_row{
+                    color:#000000;
+                    margin-left:0px;
+                    width:800px;
+                }
+                div.dokuwiki .search_result_row_child{
+                    color:#000000;
+                    margin-left:30px;
+                    width:800px;
                 }
                 div.dokuwiki .search_cnt{
                     color:#CCCCCC;
@@ -95,12 +115,16 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 div.dokuwiki .search_nmsp{
                     font-size: 10px;
                 }
+                div.dokuwiki .sphinxsearch_nav{
+                    clear:both;
+                }
                 </style>
                 ';
 
             echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
             echo '<div class="search_result">';
             // printout the results
+            $prevPage = '';
             foreach ($pagesList as $crc => $row) {
                 $page = $row['page'];
                 $bodyExcerpt = $row['bodyExcerpt'];
@@ -121,6 +145,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
                 $namespaces = getNsLinks($page, $keywords, $search);
                 $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
+
+                if($page == $prevPage){
+                    echo '<div class="search_result_row_child">';
+                } else {
+                    echo '<div class="search_result_row">';
+                }
 
                 echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
                 echo '<div class="search_snippet">';
@@ -143,20 +173,31 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 echo '</span>';
                 echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
                 echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
-                echo '<br />';echo '<br />';
+                echo '<br />';
+                echo '<br />';
+                echo '</div>';
+                $prevPage = $page;
             }
             echo '</div>';
+            echo '<div class="search_sidebar">';
+            printNamespaces($keywords);
+            echo '</div>';
             echo '<div class="sphinxsearch_nav">';
-            if ($start > 1){
-                $prev = $start - $this->getConf('maxresults');
+            /*if ($start > 1){
+                //$prev = $start - $this->getConf('maxresults');
+                $prev = $start - $search->getOffset();
                 if($prev < 0) $prev = 0;
 
                 echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$prev),'false','&'),
                                           'prev','wikilink1 gs_prev',$conf['target']['interwiki']);
             }
             echo ' ';
-            if($start + $this->getConf('maxresults') < $totalFound){
-                $next = $start + $this->getConf('maxresults');
+             * 
+             */
+            //if($start + $this->getConf('maxresults') < $totalFound){
+                //$next = $start + $this->getConf('maxresults');
+            if($start + $search->getOffset() < $totalFound){
+                $next = $start + $search->getOffset();
 
                 echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$next),'false','&'),
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);

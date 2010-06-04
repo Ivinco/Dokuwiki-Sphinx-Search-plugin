@@ -46,7 +46,6 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 ';
 
 $pageMapper = new PageMapper();
-$counter = 0;
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
     resolve_pageid('',$page,$exists);
@@ -55,11 +54,26 @@ foreach($pagesList as $row){
     }
     //get meta data
     $metadata = p_get_metadata($dokuPageId);
+
+    $data = array();
+    $data['id'] = crc32($dokuPageId);
+    $data['categories'] = getCategories($dokuPageId);
+    $data['level'] = 1;
+    $data['modified'] = $metadata['date']['modified'];
+    $data['title'] = strip_tags($metadata['title']);
+    $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+
+    echo formatXml($data)."\n";
+    $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
+    
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
     
     if (!empty($sections)){
         foreach($sections as $hid => $section){
             //parse meta data for headers, abstract, date, authors
+            if(strlen($section['section']) < 1000){
+                continue;
+            }
             $data = array();
             $data['id'] = crc32($dokuPageId.$hid);
             $data['categories'] = getCategories($dokuPageId) . '#' . $hid;
@@ -70,27 +84,8 @@ foreach($pagesList as $row){
 
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $section['title_text'], $section['title'], $hid);
-            $counter++;
         }
-    } else {
-        //parse meta data for headers, abstract, date, authors
-        $data = array();
-        $data['id'] = crc32($dokuPageId);
-        $data['categories'] = getCategories($dokuPageId);
-        $data['level'] = 1;
-        $data['modified'] = $metadata['date']['modified'];
-        $data['title'] = strip_tags($metadata['title']);
-        $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
-
-        echo formatXml($data)."\n";
-        $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
-        $counter++;
-    }
+    } 
     
 }
 echo '</sphinx:docset>';
-
-/*
-echo $counter;
-echo "\n".number_format(memory_get_peak_usage()/1024)."K\n";
-*/

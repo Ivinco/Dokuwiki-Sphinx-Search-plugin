@@ -9,6 +9,7 @@ class PageMapper
     private $_database = 'pagedata';
     private $_table = 'pages';
     private $_db = null;
+    private $_offset = 0;
     public function  __construct()
     {
         global $conf;
@@ -48,22 +49,20 @@ class PageMapper
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getByCrc(&$pageCrcList, $rpp)
+    public function getByCrc($pageCrcList)
     {
         $sql = sprintf("select * from {$this->_table} where page_crc in (%s)", implode(",", $pageCrcList));
         $result = $this->_db->query($sql);
         $rows = $result->fetchAll(PDO::FETCH_ASSOC);
         
         $pages = array();
-        $counter = 1;
         foreach($rows as $row){
-            if(auth_quickaclcheck($row['page']) >= AUTH_READ){
-                $pages[$row['page_crc']] = array('page' => $row['page'], 'hid' => $row['hid'], 'title' => $row['title'], 'title_text' => $row['title_text']);
-                if ($counter++ == $rpp){
-                    break;
-                } 
-            }
+            $pages[$row['page_crc']] = array('page' => $row['page'], 'hid' => $row['hid'], 'title' => $row['title'], 'title_text' => $row['title_text']);
         }
-        return $pages;
-    }
+        $results = array();
+        foreach($pageCrcList as $crc){
+            $results[$crc] = $pages[$crc];
+        }
+        return $results;
+    }    
 }

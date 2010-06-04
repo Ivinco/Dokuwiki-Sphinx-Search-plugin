@@ -35,7 +35,6 @@ class SphinxSearch
         $query = '';
         if (!empty($keywords) && empty($categories)){
             $starCategory = $this->starQuery($keywords);
-            //$query = "@(body,title) {$keywords} | @categories {$starCategory}";
             $query = "(@(body,title) {$keywords} | (@categories {$starCategory}))";
             //echo $query;exit;
         } else {

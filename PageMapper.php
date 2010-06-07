@@ -9,7 +9,6 @@ class PageMapper
     private $_database = 'pagedata';
     private $_table = 'pages';
     private $_db = null;
-    private $_offset = 0;
     public function  __construct()
     {
         global $conf;

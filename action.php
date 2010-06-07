@@ -100,24 +100,35 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                     width:800px;
                     float:left;
                 }
+                div.dokuwiki .search_result a.title{
+                    font:16px Arial,Helvetica,sans-serif;
+                }
+                div.dokuwiki .search_result span{
+                    font:14px Arial,Helvetica,sans-serif;
+                }
                 div.dokuwiki .search_sidebar{
-                    width:200px;
+                    width:300px;
                     float:right;
                     margin-right: 30px;
                 }
                 div.dokuwiki .search_result_row{
                     color:#000000;
                     margin-left:0px;
-                    width:800px;
+                    width:600px;
+                    text-align:left;
                 }
                 div.dokuwiki .search_result_row_child{
                     color:#000000;
                     margin-left:30px;
-                    width:800px;
+                    width:600px;
+                    text-align:left;
+                }
+                div.dokuwiki .hide{
+                    display:none;
                 }
                 div.dokuwiki .search_cnt{
-                    color:#CCCCCC;
-                    font-size: 10px;
+                    color:#909090;
+                    font:14px Arial,Helvetica,sans-serif;
                 }
                 div.dokuwiki .search_nmsp{
                     font-size: 10px;
@@ -126,7 +137,17 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                     clear:both;
                 }
                 </style>
-                ';
+                <script type="text/javascript">
+function sh(id)
+{
+    var e = document.getElementById(id);
+    if(e.style.display == "block")
+        e.style.display = "none";
+    else
+        e.style.display = "block";
+}
+</script>
+';
 
             echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
             echo '<div class="search_result">';
@@ -141,16 +162,20 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 }
             }
             foreach ($pageListGroupByPage as $row) {
-                $this->_showResult($row, $keywords);
+                $this->_showResult($row, $keywords, false);
                 if(!empty($row['subpages'])){
+                    echo '<div id="more'.$row['page'].'" class="hide">';
                     foreach($row['subpages'] as $sub){
                         $this->_showResult($sub, $keywords, true);
                     }
+                    echo '</div>';
                 }
                 
             }
             echo '</div>';
-            echo '<div class="search_sidebar">';
+            echo '<div class="search_sidebar">
+                <h3>Matching pagenames</h3>
+                ';
             printNamespaces($keywords);
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';
@@ -214,7 +239,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             echo '<div class="search_result_row">';
         }
 
-        echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
+        echo '<a class="wikilink1 title" href="'.$href.'" title="" >'.$titleText.'</a><br/>';
         echo '<div class="search_snippet">';
         echo strip_tags($bodyExcerpt, '<b>,<strong>');
         echo '</div>';
@@ -224,7 +249,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         foreach ($namespaces as $name){
             $link = $name['link'];
             $pageTitle = $name['title'];
-            tpl_link($link, $pageTitle);
+            tpl_link($link, $pageTitle, "class='wikilink1'");
             if ($i++ < count($namespaces)-1){
                 echo $sep;
             }
@@ -235,7 +260,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         echo '</span>';
         echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
         echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
-        echo '<br />';
+        if (!empty($row['subpages'])){
+            echo '<br />';
+            echo '<div style="text-align:right"><a href="javascript:void(0)" onClick="sh('."'more".$page."'".');" class="wikilink1">More results from this document</a></div>';
+        }else {
+            echo '<br />';
+        }
         echo '<br />';
         echo '</div>';
     }

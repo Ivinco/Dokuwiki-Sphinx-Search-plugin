@@ -306,7 +306,7 @@ function printNamespaces($query)
       $name = $id;
     }
     $href = ("?do=search&id={$query}".urlencode(" @categories {$id}"));
-    tpl_link($href,$id);
+    tpl_link($href,$id, "class='wikilink1'");
     print '</li>';
     if(++$counter == 20){
         break;

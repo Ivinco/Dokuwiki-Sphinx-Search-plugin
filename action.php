@@ -91,20 +91,23 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             return;
         } else {
             echo '<style type="text/css">
+                div.dokuwiki .search{
+                    width:1024px;
+                }
                 div.dokuwiki .search_snippet{
                     color:#000000;
                     margin-left:0px;
                     font-size: 13px;
                 }
                 div.dokuwiki .search_result{
-                    width:800px;
+                    width:600px;
                     float:left;
                 }
                 div.dokuwiki .search_result a.title{
                     font:16px Arial,Helvetica,sans-serif;
                 }
                 div.dokuwiki .search_result span{
-                    font:14px Arial,Helvetica,sans-serif;
+                    font:12px Arial,Helvetica,sans-serif;
                 }
                 div.dokuwiki .search_sidebar{
                     width:300px;
@@ -128,7 +131,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 }
                 div.dokuwiki .search_cnt{
                     color:#909090;
-                    font:14px Arial,Helvetica,sans-serif;
+                    font:12px Arial,Helvetica,sans-serif;
                 }
                 div.dokuwiki .search_nmsp{
                     font-size: 10px;
@@ -146,10 +149,11 @@ function sh(id)
     else
         e.style.display = "block";
 }
-</script>
+</script>            
 ';
 
             echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
+            echo '<div class="search">';
             echo '<div class="search_result">';
             // printout the results
             $pageListGroupByPage = array();
@@ -207,7 +211,10 @@ function sh(id)
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }
             echo '</div>';
+
+            echo '</div>';
         }
+
         
     }
 
@@ -249,7 +256,7 @@ function sh(id)
         foreach ($namespaces as $name){
             $link = $name['link'];
             $pageTitle = $name['title'];
-            tpl_link($link, $pageTitle, "class='wikilink1'");
+            tpl_link($link, $pageTitle);
             if ($i++ < count($namespaces)-1){
                 echo $sep;
             }
@@ -262,7 +269,7 @@ function sh(id)
         echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
         if (!empty($row['subpages'])){
             echo '<br />';
-            echo '<div style="text-align:right"><a href="javascript:void(0)" onClick="sh('."'more".$page."'".');" class="wikilink1">More results from this document</a></div>';
+            echo '<div style="text-align:right;font:12px Arial,Helvetica,sans-serif;text-decoration:underline;"><a href="javascript:void(0)" onClick="sh('."'more".$page."'".');" >More matches in this document</a></div>';
         }else {
             echo '<br />';
         }

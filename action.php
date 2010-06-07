@@ -152,7 +152,7 @@ function sh(id)
 </script>            
 ';
 
-            echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' document ' : ' documents ') . ' for query "' . hsc($query).'"</h2>';
+            echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' match ' : ' matches ') . ' for query "' . hsc($query).'"</h2>';
             echo '<div class="search">';
             echo '<div class="search_result">';
             // printout the results

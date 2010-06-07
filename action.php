@@ -144,7 +144,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 $this->_showResult($row);
                 if(!empty($row['subpages'])){
                     foreach($row['subpages'] as $sub){
-                        $this->_showSubResult($sub);
+                        $this->_showResult($sub, true);
                     }
                 }
                 
@@ -158,15 +158,15 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 //$prev = $start - $this->getConf('maxresults');                
                 //if($prev < 0) $prev = 0;
                 if(false !== strpos($prev, ',')){
-                    $prevAr = explode(",", $prev);
-                    $prevNum = $prevAr[count($prevAr)-1];
-                    unset($prevAr[count($prevAr)-1]);
-                    $prevPrev = implode(",", $prevAr);
+                    $prevArry = explode(",", $prev);
+                    $prevNum = $prevArry[count($prevArry)-1];
+                    unset($prevArry[count($prevArry)-1]);
+                    $prevString = implode(",", $prevArry);
                 } else {
                     $prevNum = 0;
                 }
 
-                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$prevNum, 'prev'=>$prevPrev),'false','&'),
+                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$prevNum, 'prev'=>$prevString),'false','&'),
                                           'prev','wikilink1 gs_prev',$conf['target']['interwiki']);                
             }
             echo ' ';
@@ -176,9 +176,9 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             if($start + $search->getOffset()< $totalFound){
                 $next = $start + $search->getOffset();
                 if($start > 1){
-                    $prev = $prev.','.$start;
+                    $prevString = $prev.','.$start;
                 }
-                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$next,'prev'=>$prev),'false','&'),
+                echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$next,'prev'=>$prevString),'false','&'),
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }
             echo '</div>';
@@ -186,7 +186,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         
     }
 
-    function _showResult($row)
+    function _showResult($row, $subpages = false)
     {
         $page = $row['page'];
         $bodyExcerpt = $row['bodyExcerpt'];
@@ -208,58 +208,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $namespaces = getNsLinks($page, $keywords, $this->_search);
         $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
 
-        echo '<div class="search_result_row">';
-
-        echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
-        echo '<div class="search_snippet">';
-        echo strip_tags($bodyExcerpt, '<b>,<strong>');
-        echo '</div>';
-        $sep=':';
-        $i = 0;
-        echo '<span class="search_nmsp">';
-        foreach ($namespaces as $name){
-            $link = $name['link'];
-            $pageTitle = $name['title'];
-            tpl_link($link, $pageTitle);
-            if ($i++ < count($namespaces)-1){
-                echo $sep;
-            }
-        }
-        if (!empty($hid)){
-            echo '#'.$hid;
-        }
-        echo '</span>';
-        echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
-        echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
-        echo '<br />';
-        echo '<br />';
-        echo '</div>';
-    }
-
-    function _showSubResult($row)
-    {
-        $page = $row['page'];
-        $bodyExcerpt = $row['bodyExcerpt'];
-        $titleTextExcerpt = $row['titleTextExcerpt'];
-        $hid = $row['hid'];
-
-        $metaData = p_get_metadata($page);
-
-        if (!empty($titleTextExcerpt)){
-            $titleText = $titleTextExcerpt;
-        } elseif(!empty($row['title_text'])){
-            $titleText = $row['title_text'];
-        } elseif(!empty($metaData['title'])){
-            $titleText = hsc($metaData['title']);
+        if($subpages){
+            echo '<div class="search_result_row_child">';
         } else {
-            $titleText = hsc($page);
+            echo '<div class="search_result_row">';
         }
 
-        $namespaces = getNsLinks($page, $keywords, $this->_search);
-        $href = !empty($hid) ? (wl($page).'#'.$hid) : wl($page);
-
-        echo '<div class="search_result_row_child">';
-       
         echo '<a href="'.$href.'" title="" class="wikilink1">'.$titleText.'</a><br/>';
         echo '<div class="search_snippet">';
         echo strip_tags($bodyExcerpt, '<b>,<strong>');

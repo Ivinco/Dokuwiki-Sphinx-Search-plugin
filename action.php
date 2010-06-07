@@ -175,7 +175,9 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 //$next = $start + $this->getConf('maxresults');
             if($start + $search->getOffset()< $totalFound){
                 $next = $start + $search->getOffset();
-                $prev = $prev.','.$start;
+                if($start > 1){
+                    $prev = $prev.','.$start;
+                }
                 echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$next,'prev'=>$prev),'false','&'),
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }

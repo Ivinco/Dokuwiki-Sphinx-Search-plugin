@@ -53,27 +53,13 @@ foreach($pagesList as $row){
         continue;
     }
     //get meta data
-    $metadata = p_get_metadata($dokuPageId);
-
-    $data = array();
-    $data['id'] = crc32($dokuPageId);
-    $data['categories'] = getCategories($dokuPageId);
-    $data['level'] = 1;
-    $data['modified'] = $metadata['date']['modified'];
-    $data['title'] = strip_tags($metadata['title']);
-    $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
-
-    echo formatXml($data)."\n";
-    $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
+    $metadata = p_get_metadata($dokuPageId);    
     
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
     
     if (!empty($sections)){
         foreach($sections as $hid => $section){
             //parse meta data for headers, abstract, date, authors
-            if(strlen($section['section']) < 1000){
-                continue;
-            }
             $data = array();
             $data['id'] = crc32($dokuPageId.$hid);
             $data['categories'] = getCategories($dokuPageId) . '#' . $hid;
@@ -85,7 +71,18 @@ foreach($pagesList as $row){
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $section['title_text'], $section['title'], $hid);
         }
-    } 
+    } else {
+        $data = array();
+        $data['id'] = crc32($dokuPageId);
+        $data['categories'] = getCategories($dokuPageId);
+        $data['level'] = 1;
+        $data['modified'] = $metadata['date']['modified'];
+        $data['title'] = strip_tags($metadata['title']);
+        $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+
+        echo formatXml($data)."\n";
+        $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
+    }
     
 }
 echo '</sphinx:docset>';

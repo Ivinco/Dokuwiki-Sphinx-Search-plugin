@@ -54,10 +54,15 @@ class SphinxSearch
         $pagesIdsAll = $pageMapper->getByCrc(array_keys($res['matches']));
         $this->_offset = 0;
         $counter = 0;
+        $tmpRes = array();
+        $pagesIds = array();
         foreach($pagesIdsAll as $id => $pageData){
             $this->_offset++;
             if(auth_quickaclcheck($pageData['page']) >= AUTH_READ){
-                $counter++;
+                if(!isset($tmpRes[$pageData['page']])){
+                    $tmpRes[$pageData['page']] = 1;
+                    $counter++;
+                } 
                 $pagesIds[$id] = $pageData;
                 if ($counter == $resultsPerPage){
                     break;

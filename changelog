@@ -1,4 +1,8 @@
 Version 0.2
+ * Fixed bug with relevance
+ * Fixed bug with navigations by pages
+ * Added namespaces list in sidebar of search results
+Version 0.2
  * Fixed bug with invalid characters in XML
  * Fixed bug with parsing dokuwiki pages
  * Fixed bug with memory leak, now it requires not more than 7Mb

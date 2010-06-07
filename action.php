@@ -60,7 +60,12 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         global $conf;        
 
         $start = (int) $start;
-        if($start < 0) $start = 0;
+        if($start < 0){
+            $start = 0;
+        }
+        if(empty($prev)){
+            $prev = 0;
+        }
 
         $categories = $this->_getCategories($query);        
         $keywords = $this->_getKeywords($query);	

@@ -177,9 +177,7 @@ function sh(id)
                 
             }
             echo '</div>';
-            echo '<div class="search_sidebar">
-                <h3>Matching pagenames</h3>
-                ';
+            echo '<div class="search_sidebar">';
             printNamespaces($keywords);
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';

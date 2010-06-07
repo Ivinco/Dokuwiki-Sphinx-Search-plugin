@@ -292,9 +292,9 @@ function printNamespaces($query)
   $data = array();
   $data = ft_pageLookup($query);
 
-  if(!count($data)) return;
+  if(!count($data)) return false;
 
-  print '<strong>'.$lang['quickhits'].'</strong>';
+  print '<h3>Matching pagenames</h3>';
   print '<ul>';
   $counter = 0;
   foreach($data as $id){

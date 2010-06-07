@@ -296,6 +296,7 @@ function printNamespaces($query)
 
   print '<strong>'.$lang['quickhits'].'</strong>';
   print '<ul>';
+  $counter = 0;
   foreach($data as $id){
     print '<li>';
     $ns = getNS($id);
@@ -307,6 +308,9 @@ function printNamespaces($query)
     $href = ("?do=search&id={$query}".urlencode(" @categories {$id}"));
     tpl_link($href,$id);
     print '</li>';
+    if(++$counter == 20){
+        break;
+    }
   }
   print '</ul>';
 }

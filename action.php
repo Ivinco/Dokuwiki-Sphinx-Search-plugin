@@ -141,10 +141,10 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
                 }
             }
             foreach ($pageListGroupByPage as $row) {
-                $this->_showResult($row);
+                $this->_showResult($row, $keywords);
                 if(!empty($row['subpages'])){
                     foreach($row['subpages'] as $sub){
-                        $this->_showResult($sub, true);
+                        $this->_showResult($sub, $keywords, true);
                     }
                 }
                 
@@ -186,7 +186,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         
     }
 
-    function _showResult($row, $subpages = false)
+    function _showResult($row, $keywords, $subpages = false)
     {
         $page = $row['page'];
         $bodyExcerpt = $row['bodyExcerpt'];

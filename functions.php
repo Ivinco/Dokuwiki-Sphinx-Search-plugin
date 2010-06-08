@@ -30,7 +30,7 @@ function escapeTextValue($value)
     {
         return "";
     }
-    $value = mb_convert_encoding($value,'UTF-8','ISO-8859-1');
+    //$value = mb_convert_encoding($value,'UTF-8','ISO-8859-1');
     $value = strip_tags($value);
     $value = stripInvalidXml($value);
     return str_replace("]]>", "]]><![CDATA[]]]]><![CDATA[>]]><![CDATA[", $value);

@@ -1,8 +1,9 @@
-Version 0.2
+Version 0.3
  * Added grouping search results by page with nested subsections
  * Fixed bug with relevance
  * Fixed bug with navigations by pages
  * Added namespaces list in sidebar of search results
+ * Fixed search by namespaces
 Version 0.2
  * Fixed bug with invalid characters in XML
  * Fixed bug with parsing dokuwiki pages

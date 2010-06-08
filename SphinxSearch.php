@@ -39,7 +39,7 @@ class SphinxSearch
             //echo $query;exit;
         } else {
             $starCategory = $this->starQuery($categories);
-            $query = "(@(body,title) {$keywords} (@categories ".$starCategory."))";
+            $query = "(@(body,title,categories) {$keywords} (@categories ".$starCategory."))";
         }
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);

@@ -18,7 +18,7 @@ function formatXml($data)
 ';
 
     return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}'),
-                        array($data['id'], escapeTextValue($data['title']), escapeTextValue($data['body']), escapeTextValue($data['categories']),
+                        array($data['id'], escapeTextValue($data['title_to_index']), escapeTextValue($data['body']), escapeTextValue($data['categories']),
                              $data['level'], $data['modified']),
                 $xmlFormat
             );
@@ -79,12 +79,13 @@ function getDocumentsByHeadings($id, $metadata)
                                     'level' => $row['level'],
                                     'title' => $row['title']
                                     );
-        if ($row['level'] > $level){
+        if ($row['level'] > $level && !empty($previouse_title)){
             $sections[$row['hid']]['title_text'] = $previouse_title . " &raquo; ".$row['title'];
         } else {
             $sections[$row['hid']]['title_text'] = $row['title'];
             $previouse_title = $row['title'];
         }
+        $sections[$row['hid']]['title_to_index'] = $row['title'];
     }
     return $sections;
 }

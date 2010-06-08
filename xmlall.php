@@ -66,10 +66,11 @@ foreach($pagesList as $row){
             $data['level'] = $section['level'];
             $data['modified'] = $metadata['date']['modified'];
             $data['title'] = strip_tags($section['title_text']);
+            $data['title_to_index'] = $section['title_to_index'];
             $data['body'] = $section['section']; //strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
             echo formatXml($data)."\n";
-            $pageMapper->add($dokuPageId, $section['title_text'], $section['title'], $hid);
+            $pageMapper->add($dokuPageId, $data['title'], $section['title'], $hid);
         }
     } else {
         $data = array();
@@ -78,6 +79,7 @@ foreach($pagesList as $row){
         $data['level'] = 1;
         $data['modified'] = $metadata['date']['modified'];
         $data['title'] = strip_tags($metadata['title']);
+        $data['title_to_index'] = $metadata['title'];
         $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
         echo formatXml($data)."\n";

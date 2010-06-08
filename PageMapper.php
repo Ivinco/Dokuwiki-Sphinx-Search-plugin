@@ -37,8 +37,8 @@ class PageMapper
                                     ".$this->_db->quote($title).",
                                     ".$this->_db->quote($title_text).")");
         if (!$result) {
-            //echo "\nPDO::errorInfo():\n";
-            //print_r($this->_db->errorInfo());
+            echo "\nPDO::errorInfo():\n";
+            print_r($this->_db->errorInfo());
         }
     }
 

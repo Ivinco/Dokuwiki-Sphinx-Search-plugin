@@ -263,8 +263,19 @@ function sh(id)
             echo '#'.$hid;
         }
         echo '</span>';
-        echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['modified']).'</span> ';
-        echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
+
+        if (!empty($metaData['last_change']['date'])){
+            echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['last_change']['date']).'</span> ';
+        } else if (!empty($metaData['date']['created'])){
+            echo '<span class="search_cnt"> - Last modified '.date("Y-m-d H:i",$metaData['date']['created']).'</span> ';
+        }
+
+        if(!empty($metaData['last_change']['user'])){
+            echo '<span class="search_cnt">by '.$metaData['last_change']['user'].'</span> ';
+        } else if(!empty($metaData['creator'])){
+            echo '<span class="search_cnt">by '.$metaData['creator'].'</span> ';
+        }
+        
         if (!empty($row['subpages'])){
             echo '<br />';
             echo '<div style="text-align:right;font:12px Arial,Helvetica,sans-serif;text-decoration:underline;"><a href="javascript:void(0)" onClick="sh('."'more".$page."'".');" >More matches in this document</a></div>';

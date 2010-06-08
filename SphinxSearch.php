@@ -42,7 +42,7 @@ class SphinxSearch
             $query = "(@(body,title,categories) {$keywords} (@categories ".$starCategory."))";
         }
         $this->_query = $query;
-        $res = $this->_sphinx->Query($query, $this->_index);
+        $res = $this->_sphinx->Query($query, $this->_index);        
         $this->_result = $res;
 
         if (empty($res['matches'])) {
@@ -83,10 +83,12 @@ class SphinxSearch
             } else {
                 $bodyHtml = p_wiki_xhtml($data['page']);
             }
+            $bodyHtml = preg_replace("#</li>#", "</li>;", $bodyHtml);
+            $bodyHtml = htmlspecialchars_decode($bodyHtml);
             $body[$crc] = strip_tags($bodyHtml);
             $titleText[$crc] = strip_tags($data['title_text']);
             $category[$crc] = $data['page'];
-        }        
+        }
 
         $starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $starQuery);

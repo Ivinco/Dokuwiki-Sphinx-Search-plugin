@@ -87,7 +87,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         
         $totalFound = $search->getTotalFound();
         if(empty($pagesList)){
-            echo '<b>Nothing was found by ' . $query . '</b>!';
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
             return;
         } else {
             echo '<style type="text/css">

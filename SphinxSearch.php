@@ -38,7 +38,7 @@ class SphinxSearch
             $query = "@categories $starCategory | @(body,title) {$keywords}";
         } else {
             $starKeyword = $this->starQuery($keywords);
-            if(strpos($categories, "-") == 0){
+            if(strpos($categories, "-") === 0){
                 $categories = '-"'.substr($categories, 1).'"';
             }
             $query = "@categories ({$categories} {$starKeyword}) | @(body,title) {$keywords}";

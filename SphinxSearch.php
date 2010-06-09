@@ -35,11 +35,13 @@ class SphinxSearch
         $query = '';
         if (!empty($keywords) && empty($categories)){
             $starCategory = $this->starQuery($keywords);
-            $query = "(@(body,title) {$keywords} | (@categories {$starCategory}))";
+            $starKeyword = $this->starQuery($keywords);
+            $query = "(@(body,title) {$starKeyword} | (@categories {$starCategory}))";
             //echo $query;exit;
         } else {
             $starCategory = $this->starQuery($categories);
-            $query = "(@(body,title,categories) {$keywords} (@categories ".$starCategory."))";
+            $starKeyword = $this->starQuery($keywords);
+            $query = "(@(body,title,categories) {$starKeyword} (@categories ".$starCategory."))";
         }
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);        
@@ -83,7 +85,7 @@ class SphinxSearch
             } else {
                 $bodyHtml = p_wiki_xhtml($data['page']);
             }
-            $bodyHtml = preg_replace("#</li>#", "</li>;", $bodyHtml);
+            $bodyHtml = preg_replace("#[\s]+?</li>#", "</li>;", $bodyHtml);
             $bodyHtml = htmlspecialchars_decode($bodyHtml);
             $body[$crc] = strip_tags($bodyHtml);
             $titleText[$crc] = strip_tags($data['title_text']);

@@ -35,13 +35,10 @@ class SphinxSearch
         $query = '';
         if (!empty($keywords) && empty($categories)){
             $starCategory = $this->starQuery($keywords);
-            $starKeyword = $this->starQuery($keywords);
-            $query = "(@(body,title) {$starKeyword} | (@categories {$starCategory}))";
-            //echo $query;exit;
+            $query = "@categories $starCategory | @(body,title) {$keywords}";
         } else {
-            $starCategory = $this->starQuery($categories);
             $starKeyword = $this->starQuery($keywords);
-            $query = "(@(body,title,categories) {$starKeyword} (@categories ".$starCategory."))";
+            $query = "@categories ({$categories} {$starKeyword}) | @(body,title) {$keywords}";
         }
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);        
@@ -140,13 +137,21 @@ class SphinxSearch
 
     public function starQuery($query)
     {
+        $query = $this->removeStars($query);
         $words = explode(" ", $query);
-        $starQuery = '';
-        foreach($words as $word){
-            $word = trim($word, "*");
-            $starQuery .= "*".$word."* ";
+        foreach($words as $id => $word){
+            $words[$id] = "*".$word."*";
         }
-        return $starQuery;
+        return implode(" ", $words);
+    }
+
+    public function removeStars($query)
+    {
+        $words = explode(" ", $query);
+        foreach($words as $id => $word){
+            $words[$id] = trim($word, "*");
+        }
+        return implode(" ", $words);
     }
 
     public function getQuery()

@@ -178,7 +178,7 @@ function sh(id)
             }
             echo '</div>';
             echo '<div class="search_sidebar">';
-            printNamespaces($keywords);
+            printNamespaces($search->removeStars($keywords));
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';
             if ($start > 1){

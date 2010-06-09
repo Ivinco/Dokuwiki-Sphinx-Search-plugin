@@ -291,6 +291,7 @@ function getNsLinks($id, $keywords, $search)
 function printNamespaces($query)
 {
   $data = array();
+  $query = str_replace(" ", "_", $query);
   $data = ft_pageLookup($query);
 
   if(!count($data)) return false;
@@ -306,7 +307,8 @@ function printNamespaces($query)
     }else{
       $name = $id;
     }
-    $href = ("?do=search&id={$query}".urlencode(" @categories {$id}"));
+    $href = wl($id);
+
     tpl_link($href,$id, "class='wikilink1'");
     print '</li>';
     if(++$counter == 20){

@@ -67,7 +67,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             $prev = 0;
         }
 
-        $categories = $this->_getCategories($query);        
+        $categories = $this->_getCategories($query);
         $keywords = $this->_getKeywords($query);	
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
@@ -182,8 +182,6 @@ function sh(id)
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';
             if ($start > 1){
-                //$prev = $start - $this->getConf('maxresults');                
-                //if($prev < 0) $prev = 0;
                 if(false !== strpos($prev, ',')){
                     $prevArry = explode(",", $prev);
                     $prevNum = $prevArry[count($prevArry)-1];
@@ -318,9 +316,11 @@ function sh(id)
     {
         $keywords = $query;
         $query = urldecode($query);
-        if (false !== ($pos = strpos($query, "@categories"))){;
+        if (false !== ($pos = strpos($query, "-@categories"))){;
             $keywords = substr($keywords, 0, $pos);
-        } 
+        }else if (false !== ($pos = strpos($query, "@categories"))){;
+            $keywords = substr($keywords, 0, $pos);
+        }
         return trim($keywords);
     }
 }

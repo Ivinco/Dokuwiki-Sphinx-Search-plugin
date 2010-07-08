@@ -317,3 +317,30 @@ function printNamespaces($query)
   }
   print '</ul>';
 }
+
+function printNamespacesNew($pageListGroupByPage)
+{
+    if(!count($pageListGroupByPage)) return false;
+
+    print '<h3>Matching pagenames</h3>';
+    print '<ul>';
+    $counter = 0;
+    foreach($pageListGroupByPage as $row){
+        print '<li>';
+        $id = $row['page'];
+        $ns = getNS($id);
+        if($ns){
+            $name = shorten(noNS($id), ' ('.$ns.')',30);
+        }else{
+            $name = $id;
+        }
+        $href = wl($id);
+
+        tpl_link($href,$id, "class='wikilink1'");
+        print '</li>';
+        if(++$counter == 20){
+            break;
+        }
+    }
+    print '</ul>';
+}

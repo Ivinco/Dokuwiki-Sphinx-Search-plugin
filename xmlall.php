@@ -67,7 +67,7 @@ foreach($pagesList as $row){
             $data['modified'] = $metadata['date']['modified'];
             $data['title'] = strip_tags($section['title_text']);
             $data['title_to_index'] = $section['title_to_index'];
-            $data['body'] = $section['section']; //strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
+            $data['body'] = $section['section']; //strip_tags(my_p_render('xhtml',p_get_instructions($section['section']),$info));
 
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $data['title'], $section['title'], $hid);
@@ -80,7 +80,7 @@ foreach($pagesList as $row){
         $data['modified'] = $metadata['date']['modified'];
         $data['title'] = strip_tags($metadata['title']);
         $data['title_to_index'] = $metadata['title'];
-        $data['body'] = io_readFile(wikiFN($dokuPageId));//strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+        $data['body'] = io_readFile(wikiFN($dokuPageId)); //strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);

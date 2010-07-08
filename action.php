@@ -68,7 +68,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         }
 
         $categories = $this->_getCategories($query);
-        $keywords = $this->_getKeywords($query);	
+        $keywords = $this->_getKeywords($query);
 
         $search = new SphinxSearch($this->getConf('host'), $this->getConf('port'), $this->getConf('index'));
         $search->setSnippetSize($this->getConf('snippetsize'));

@@ -35,13 +35,13 @@ class SphinxSearch
         $query = '';
         if (!empty($keywords) && empty($categories)){
             $starCategory = $this->starQuery($keywords);
-            $query = "@categories $starCategory | @(body,title) {$keywords}";
+            $query = "(@categories $starCategory) | (@(body,title) {$keywords})";
         } else {
             $starKeyword = $this->starQuery($keywords);
             if(strpos($categories, "-") === 0){
                 $categories = '-"'.substr($categories, 1).'"';
             }
-            $query = "@categories ({$categories} {$starKeyword}) | @(body,title) {$keywords}";
+            $query = "(@categories {$categories}) & ((@(body,title) {$keywords}) | (@categories {$starKeyword}))";
         }
         $this->_query = $query;
         $res = $this->_sphinx->Query($query, $this->_index);        

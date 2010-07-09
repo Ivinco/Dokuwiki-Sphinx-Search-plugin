@@ -13,6 +13,7 @@ class SphinxSearch
 
     private $_snippetSize = 256;
     private $_aroundKeyword = 5;
+    private $_resultsPerPage = 10;
 
     private $_titlePriority = 20;
     private $_bodyPriority = 5;
@@ -27,33 +28,47 @@ class SphinxSearch
         $this->_index = $index;
     }
 
-    public function search($keywords, $categories, $start, $resultsPerPage = 10)
+    public function setSearchAllQuery($keywords, $categories)
     {
+        $starCategory = $this->starQuery($keywords);
+        $this->_query = "(@categories $starCategory) | (@(body,title) {$keywords})";
+    }
+
+    public function setSearchAllQueryWithCategoryFilter($keywords, $categories)
+    {
+        $starKeyword = $this->starQuery($keywords);
+        if(strpos($categories, "-") === 0){
+            $categories = '-"'.substr($categories, 1).'"';
+        }
+        $this->_query = "(@categories {$categories}) & ((@(body,title) {$keywords}) | (@categories {$starKeyword}))";
+    }
+
+    public function setSearchCategoryQuery($keywords)
+    {
+        $starCategory = $this->starQuery($keywords);
+        $this->_query = "@categories $starCategory";
+    }
+
+    public function search($start, $resultsPerPage = 10)
+    {
+        $this->_resultsPerPage = $resultsPerPage;
+
         $this->_sphinx->SetFieldWeights(array('categories' => $this->_categoriesPriority, 'title' => $this->_titlePriority, 'body' => $this->_bodyPriority));
 
         $this->_sphinx->SetLimits($start, $resultsPerPage+100);
-        $query = '';
-        if (!empty($keywords) && empty($categories)){
-            $starCategory = $this->starQuery($keywords);
-            $query = "(@categories $starCategory) | (@(body,title) {$keywords})";
-        } else {
-            $starKeyword = $this->starQuery($keywords);
-            if(strpos($categories, "-") === 0){
-                $categories = '-"'.substr($categories, 1).'"';
-            }
-            $query = "(@categories {$categories}) & ((@(body,title) {$keywords}) | (@categories {$starKeyword}))";
-        }
-        $this->_query = $query;
-        $res = $this->_sphinx->Query($query, $this->_index);        
+
+        $res = $this->_sphinx->Query($this->_query, $this->_index);
         $this->_result = $res;
 
         if (empty($res['matches'])) {
             return false;
 	}
+        return true;
+    }
 
-        $pageMapper = new PageMapper();
-
-        $pagesIdsAll = $pageMapper->getByCrc(array_keys($res['matches']));
+    public function getPages()
+    {
+        $pagesIdsAll = $this->getPagesIds();
         $this->_offset = 0;
         $counter = 0;
         $tmpRes = array();
@@ -66,7 +81,7 @@ class SphinxSearch
                     $counter++;
                 } 
                 $pagesIds[$id] = $pageData;
-                if ($counter == $resultsPerPage){
+                if ($counter == $this->_resultsPerPage){
                     break;
                 }
             }             
@@ -109,6 +124,13 @@ class SphinxSearch
             $i++;
         }
         return $results;
+    }
+
+    public function getPagesIds()
+    {
+        $pageMapper = new PageMapper();
+
+        return $pageMapper->getByCrc(array_keys($this->_result['matches']));
     }
 
     public function getOffset()

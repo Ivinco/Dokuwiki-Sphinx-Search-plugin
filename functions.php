@@ -292,7 +292,7 @@ function printNamespaces($query)
 {
   $data = array();
   $query = str_replace(" ", "_", $query);
-  $data = ft_pageLookup($query);
+  $data = ft_pageLookup($query, false);
 
   if(!count($data)) return false;
 
@@ -318,29 +318,16 @@ function printNamespaces($query)
   print '</ul>';
 }
 
-function printNamespacesNew($pageListGroupByPage)
+function printNamespacesNew($pageNames)
 {
-    if(!count($pageListGroupByPage)) return false;
+    if(empty($pageNames)) return false;
 
     print '<h3>Matching pagenames</h3>';
     print '<ul>';
-    $counter = 0;
-    foreach($pageListGroupByPage as $row){
+    foreach($pageNames as $id){
         print '<li>';
-        $id = $row['page'];
-        $ns = getNS($id);
-        if($ns){
-            $name = shorten(noNS($id), ' ('.$ns.')',30);
-        }else{
-            $name = $id;
-        }
-        $href = wl($id);
-
-        tpl_link($href,$id, "class='wikilink1'");
+        tpl_link(wl($id),$id, "class='wikilink1'");
         print '</li>';
-        if(++$counter == 20){
-            break;
-        }
     }
     print '</ul>';
 }

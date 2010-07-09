@@ -76,14 +76,21 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $search->setTitlePriority($this->getConf('title_priority'));
         $search->setBodyPriority($this->getConf('body_priority'));
         $search->setCategoriesPriority($this->getConf('categories_priority'));
-        
-        $pagesList = $search->search($keywords, $categories, $start, $this->getConf('maxresults'));
+
+        if (!empty($keywords) && empty($categories)){
+            $search->setSearchAllQuery($keywords, $categories);
+        } else {
+            $search->setSearchAllQueryWithCategoryFilter($keywords, $categories);
+        }
+        $result = $search->search($start, $this->getConf('maxresults'));
         $this->_search = $search;
 
-        if ($search->getError()){
+        if (!$result || $search->getError()){
             echo '<b>' . $search->getError() . '</b>!';
             return;
         }
+
+        $pagesList = $search->getPages();
         
         $totalFound = $search->getTotalFound();
         if(empty($pagesList)){
@@ -178,7 +185,7 @@ function sh(id)
             }
             echo '</div>';
             echo '<div class="search_sidebar">';
-            printNamespacesNew($pageListGroupByPage);
+            printNamespacesNew($this->_getMatchingPagenames($keywords));
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';
             if ($start > 1){
@@ -322,6 +329,22 @@ function sh(id)
             $keywords = substr($keywords, 0, $pos);
         }
         return trim($keywords);
+    }
+
+    function _getMatchingPagenames($keywords)
+    {
+        $this->_search->setSearchCategoryQuery($keywords);
+        $res = $this->_search->search(0, 20);
+        if (!$res){
+            return false;
+        }
+        $pageIds = $this->_search->getPagesIds();
+
+        $matchPages = array();
+        foreach($pageIds as $page){
+            $matchPages[] = $page['page'];
+        }
+        return array_unique($matchPages);
     }
 }
 

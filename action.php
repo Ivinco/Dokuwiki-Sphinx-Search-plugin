@@ -185,7 +185,7 @@ function sh(id)
             }
             echo '</div>';
             echo '<div class="search_sidebar">';
-            printNamespacesNew($this->_getMatchingPagenames($keywords));
+            printNamespacesNew($this->_getMatchingPagenames($keywords, $categories));
             echo '</div>';
             echo '<div class="sphinxsearch_nav">';
             if ($start > 1){

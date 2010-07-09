@@ -30,8 +30,8 @@ class SphinxSearch
 
     public function setSearchAllQuery($keywords, $categories)
     {
-        $starCategory = $this->starQuery($keywords);
-        $this->_query = "(@categories $starCategory) | (@(body,title) {$keywords})";
+        $starKeyword = $this->starQuery($keywords);
+        $this->_query = "(@categories $starKeyword) | (@(body,title) {$keywords})";
     }
 
     public function setSearchAllQueryWithCategoryFilter($keywords, $categories)
@@ -43,10 +43,10 @@ class SphinxSearch
         $this->_query = "(@categories {$categories}) & ((@(body,title) {$keywords}) | (@categories {$starKeyword}))";
     }
 
-    public function setSearchCategoryQuery($keywords)
+    public function setSearchCategoryQuery($keywords, $categories)
     {
-        $starCategory = $this->starQuery($keywords);
-        $this->_query = "@categories $starCategory";
+        $starKeyword = $this->starQuery($keywords);
+        $this->_query = "@categories {$categories} $starKeyword";
     }
 
     public function search($start, $resultsPerPage = 10)

@@ -322,12 +322,17 @@ function printNamespacesNew($pageNames)
 {
     if(empty($pageNames)) return false;
 
+    $limit = 10;
     print '<h3>Matching pagenames</h3>';
     print '<ul>';
+    $counter = 0;
     foreach($pageNames as $id){
         print '<li>';
         tpl_link(wl($id),$id, "class='wikilink1'");
         print '</li>';
+        if (++$counter == $limit){
+            break;
+        }
     }
     print '</ul>';
 }

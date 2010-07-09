@@ -331,9 +331,9 @@ function sh(id)
         return trim($keywords);
     }
 
-    function _getMatchingPagenames($keywords)
+    function _getMatchingPagenames($keywords, $categories)
     {
-        $this->_search->setSearchCategoryQuery($keywords);
+        $this->_search->setSearchCategoryQuery($keywords, $categories);
         $res = $this->_search->search(0, 20);
         if (!$res){
             return false;

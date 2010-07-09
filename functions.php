@@ -326,7 +326,7 @@ function printNamespacesNew($pageNames)
     print '<h3>Matching pagenames</h3>';
     print '<ul>';
     $counter = 0;
-    foreach($pageNames as $id){
+    foreach($pageNames as $id => $header){
         $ns = getNS($id);
         if($ns){
           $name = shorten(noNS($id), ' ('.$ns.')',30);
@@ -334,7 +334,11 @@ function printNamespacesNew($pageNames)
           $name = $id;
         }
         print '<li>';
-        tpl_link(wl($id),$name, "class='wikilink1'");
+        if (!empty($header)){
+            print '<a href="'.wl($id).'#'.$header.'" '. "class='wikilink1'>".$id."</a>".'#'.$header;
+        } else {
+            print '<a href="'.wl($id).'" '. "class='wikilink1'>".$id."</a>";
+        }
         print '</li>';
         if (++$counter == $limit){
             break;

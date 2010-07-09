@@ -90,7 +90,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
             return;
         }
 
-        $pagesList = $search->getPages();
+        $pagesList = $search->getPages($keywords);
         
         $totalFound = $search->getTotalFound();
         if(empty($pagesList)){
@@ -334,7 +334,7 @@ function sh(id)
     function _getMatchingPagenames($keywords, $categories)
     {
         $this->_search->setSearchCategoryQuery($keywords, $categories);
-        $res = $this->_search->search(0, 20);
+        $res = $this->_search->search(0, 10);
         if (!$res){
             return false;
         }
@@ -342,7 +342,7 @@ function sh(id)
 
         $matchPages = array();
         foreach($pageIds as $page){
-            $matchPages[] = $page['page'];
+            $matchPages[$page['page']] = $page['hid'];
         }
         return array_unique($matchPages);
     }

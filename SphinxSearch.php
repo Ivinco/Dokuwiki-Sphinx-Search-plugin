@@ -70,7 +70,7 @@ class SphinxSearch
         return true;
     }
 
-    public function getPages()
+    public function getPages($keywords)
     {
         $pagesIdsAll = $this->getPagesIds();
         $this->_offset = 0;

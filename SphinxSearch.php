@@ -47,9 +47,9 @@ class SphinxSearch
     {
         $starKeyword = $this->starQuery($keywords);
         if (!empty($categories)){
-            $this->_query = "((@categories {$categories}) & (@categories $starKeyword))";
+            $this->_query = "(@categories {$categories} $keywords)";
         } else {
-            $this->_query = "@categories $starKeyword";
+            $this->_query = "(@categories $starKeyword)";
         }
     }
 

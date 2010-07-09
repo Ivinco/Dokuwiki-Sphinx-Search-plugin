@@ -46,7 +46,7 @@ class SphinxSearch
     public function setSearchCategoryQuery($keywords, $categories)
     {
         $starKeyword = $this->starQuery($keywords);
-        $this->_query = "@categories {$categories} $starKeyword";
+        $this->_query = "((@categories {$categories}) & (@categories $starKeyword))";
     }
 
     public function search($start, $resultsPerPage = 10)

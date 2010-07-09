@@ -327,8 +327,14 @@ function printNamespacesNew($pageNames)
     print '<ul>';
     $counter = 0;
     foreach($pageNames as $id){
+        $ns = getNS($id);
+        if($ns){
+          $name = shorten(noNS($id), ' ('.$ns.')',30);
+        }else{
+          $name = $id;
+        }
         print '<li>';
-        tpl_link(wl($id),$id, "class='wikilink1'");
+        tpl_link(wl($id),$name, "class='wikilink1'");
         print '</li>';
         if (++$counter == $limit){
             break;

@@ -79,21 +79,24 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
 
         if (!empty($keywords) && empty($categories)){
             $search->setSearchAllQuery($keywords, $categories);
-        } else {
+        } elseif (!empty($keywords)) {
             $search->setSearchAllQueryWithCategoryFilter($keywords, $categories);
+        } else {
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
+            return;
         }
         $result = $search->search($start, $this->getConf('maxresults'));
         $this->_search = $search;
 
         if (!$result || $search->getError()){
-            echo '<b>' . $search->getError() . '</b>!';
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
             return;
         }
 
         $pagesList = $search->getPages($keywords);
         
         $totalFound = $search->getTotalFound();
-        if(empty($pagesList)){
+        if(empty($pagesList) || 0 == $totalFound){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
             return;
         } else {

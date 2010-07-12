@@ -107,7 +107,11 @@ class SphinxSearch
             $bodyHtml = preg_replace("#[\s]+?</li>#", "</li>;", $bodyHtml);
             $bodyHtml = htmlspecialchars_decode($bodyHtml);
             $body[$crc] = strip_tags($bodyHtml);
-            $titleText[$crc] = strip_tags($data['title_text']);
+            if(!empty($data['title_text'])){
+                $titleText[$crc] = strip_tags($data['title_text']);
+            } else {
+                $titleText[$crc] = $data['page'];
+            }
             $category[$crc] = $data['page'];
         }
 

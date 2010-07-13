@@ -79,6 +79,9 @@ class SphinxSearch
 
     public function getPages($keywords)
     {
+        if (empty($this->_result['matches'])) {
+            return false;
+	}
         $pagesIdsAll = $this->getPagesIds();
         $this->_offset = 0;
         $counter = 0;

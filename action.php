@@ -127,10 +127,16 @@ Such query will look for documents that have keyword \"blog\" but don't have key
             return;
         }
 
+        if(!$result){
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
+                <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
+            return;
+        }
+
         $pagesList = $search->getPages($keywords);
         
         $totalFound = $search->getTotalFound();
-        if(!$result || empty($pagesList) || 0 == $totalFound){
+        if(empty($pagesList) || 0 == $totalFound){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
                 <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;

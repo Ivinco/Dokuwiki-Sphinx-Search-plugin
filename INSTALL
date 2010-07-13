@@ -13,7 +13,7 @@
 	$php {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/indexer.php
 
 3. After indexer completes it's job, run searchd, e.g.:
-	$searchd -c sphinx.conf
+	$searchd -c {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/sphinx.conf
 By default plugin is using 9312 as the searchd port, so make sure this
 port is free (if you have sphinx on other port, see #5).
 

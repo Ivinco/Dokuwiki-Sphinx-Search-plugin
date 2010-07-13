@@ -56,7 +56,7 @@ Such query will look for documents that have keyword \"blog\" but don't have key
      * register the eventhandlers
      */
     function register(&$controller){
-        $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());
+        $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());        
     }
 
     /**
@@ -70,6 +70,11 @@ Such query will look for documents that have keyword \"blog\" but don't have key
         // we can handle it -> prevent others
         $event->stopPropagation();
         $event->preventDefault();
+
+        if (!extension_loaded('sqlite')) {
+            echo "SQLite extension is not loaded!";
+            return;
+        }
 
         if(!empty($_REQUEST['ssplugininfo'])){
             $info = array();

@@ -351,11 +351,12 @@ function printNamespacesNew($pageNames)
           $name = $id;
         }
         print '<li>';
-        if (!empty($header)){
+        /*if (!empty($header)){
             print '<a href="'.wl($id).'#'.$header.'" '. "class='wikilink1'>".$id."</a>".'#'.$header;
         } else {
             print '<a href="'.wl($id).'" '. "class='wikilink1'>".$id."</a>";
-        }
+        }*/
+        print '<a href="'.wl($id).'" '. "class='wikilink1'>".$id."</a>";
         print '</li>';
         if (++$counter == $limit){
             break;

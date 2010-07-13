@@ -6,7 +6,7 @@
  */
 
 $conf['host']     = 'localhost';
-$conf['port']     = 3313;
+$conf['port']     = 9312;
 $conf['index']     = 'dk_main';
 $conf['maxresults'] = 10;
 $conf['snippetsize'] = 200;

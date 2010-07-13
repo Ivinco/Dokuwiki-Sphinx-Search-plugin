@@ -295,7 +295,7 @@ function getNsLinks($id, $keywords, $search)
         } else {
             $titles[wl($page)] = $parts[$i];
         }
-        $data[] = array('link' => "?do=search&id={$keywords}".urlencode(" @cat $page"));
+        $data[] = array('link' => "?do=search&id={$keywords}".urlencode(" @ns $page"));
     }
     $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($keywords));
     $i = 0;

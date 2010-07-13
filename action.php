@@ -20,6 +20,28 @@ require_once(DOKU_PLUGIN . 'sphinxsearch/functions.php');
 class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
     var $_search = null;
 
+    var $_helpMessage = "
+===== DokuWiki Sphinx Search plugin features=====
+
+To use the search you need to just enter your search keywords into the searchbox at the top left corner of the DokuWiki. When basic simple search is not enough you can try using the methods listed below:
+
+=== Phrase search (\"\") ===
+Put double quotes around a set of words to enable phrase search mode. For example:
+<code>\"James Bond\"</code>
+
+=== Search within a namespace ===
+You can add \"@ns\" parameter to limit the search to some namespace. For exapmle:
+<code>hotel @ns personal:mike:travel</code>
+Such query will return only results from \"personal:mike:travel\" namespace for keyword \"hotel\".
+
+=== Excluding keywords or namespaces from search ===
+You can add a minus sign to a keyword or a category name exclude it from search. For example:
+<code>hotel @ns -personal:mike</code>
+Such query will look for \"hotel\" everywhere except the \"personal:mike\" namespace.
+<code>blog -post</code>
+Such query will look for documents that have keyword \"blog\" but don't have keyword \"post\".
+";
+
     /**
 	* return some info
 	*/
@@ -49,6 +71,11 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $event->stopPropagation();
         $event->preventDefault();
 
+        if(!empty($_REQUEST['ssplugininfo'])){
+            $info = array();
+            echo p_render('xhtml',p_get_instructions($this->_helpMessage), $info);
+            return;
+        }
         
         $this->_search($QUERY,$_REQUEST['start'],$_REQUEST['prev']);
     }    
@@ -83,14 +110,16 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         } elseif (!empty($keywords)) {
             $search->setSearchAllQueryWithCategoryFilter($keywords, $categories);
         } else {
-            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br>
+                <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;
         }
         $result = $search->search($start, $this->getConf('maxresults'));
         $this->_search = $search;
 
         if (!$result || $search->getError()){
-            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
+                <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;
         }
 
@@ -98,7 +127,8 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         
         $totalFound = $search->getTotalFound();
         if(empty($pagesList) || 0 == $totalFound){
-            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.';
+            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
+                <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;
         } else {
             echo '<style type="text/css">
@@ -218,7 +248,7 @@ function sh(id)
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }
             echo '</div>';
-
+            echo '<a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             echo '</div>';
         }
 
@@ -295,7 +325,8 @@ function sh(id)
         echo '</div>';
     }
 
-     function searchform(){
+     function searchform()
+    {
           global $lang;
           global $ACT;
           global $QUERY;
@@ -317,8 +348,8 @@ function sh(id)
     {
         $categories = '';
         $query = urldecode($query);
-        if (false !== ($pos = strpos($query, "@cat"))){;
-            $categories = substr($query, $pos + strlen("@cat"));
+        if (false !== ($pos = strpos($query, "@ns"))){;
+            $categories = substr($query, $pos + strlen("@ns"));
         }
         return trim($categories);
     }
@@ -327,9 +358,9 @@ function sh(id)
     {
         $keywords = $query;
         $query = urldecode($query);
-        if (false !== ($pos = strpos($query, "-@cat"))){;
+        if (false !== ($pos = strpos($query, "-@ns"))){;
             $keywords = substr($keywords, 0, $pos);
-        }else if (false !== ($pos = strpos($query, "@cat"))){;
+        }else if (false !== ($pos = strpos($query, "@ns"))){;
             $keywords = substr($keywords, 0, $pos);
         }
         return trim($keywords);

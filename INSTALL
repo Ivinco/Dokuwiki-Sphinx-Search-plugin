@@ -9,19 +9,27 @@
 
 1. Unpack plugin files into lib/plugins directory of your DokuWiki installation.
 
-2. Run Sphinx Search indexer to index your DokuWiki data for the first time. 
+2. Run Sphinx Search indexer to index your DokuWiki data for the first time.
 Note: you have to run it from lib/plugins/sphinxsearch directory. e.g.:
 	$cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch
-	$indexer -c sphinx.conf dk_main
+	$php indexer.php
 
 3. After indexer completes it's job, run searchd, e.g.:
 	$searchd -c sphinx.conf
-By default searchd port is 3313, so make sure this port is free (if you have sphinx on other port, see #5).
+By default plugin is using 9312 as the searchd port, so make sure this
+port is free (if you have sphinx on other port, see #5).
 
-4. To have your search results up-to-date, setup cronjob to periodically re-index your DokuWiki data, e.g.:
+4. To have your search results up-to-date, setup cronjob to
+periodically re-index your DokuWiki data, e.g.:
     1 10 * * * root {Your_DokuWiki_Path}/lib/plugin/sphinxsearch/indexer.php
 
-5. You can fine-tune the search behavior by editing the configuration file conf/default.php
+5. You can fine-tune the search behavior by editing the configuration
+files conf/default.php and sphinx.conf.
 
 
+=== Support ===
 
+Ivinco Ltd. is actively providing support for users of this plugin.
+Contact us at www.ivinco.com.
+See the latest plugin info on this page:
+http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/

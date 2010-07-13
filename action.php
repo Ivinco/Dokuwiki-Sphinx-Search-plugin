@@ -23,7 +23,7 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
     var $_helpMessage = "
 ===== DokuWiki Sphinx Search plugin features=====
 
-To use the search you need to just enter your search keywords into the searchbox at the top left corner of the DokuWiki. When basic simple search is not enough you can try using the methods listed below:
+To use the search you need to just enter your search keywords into the searchbox at the top right corner of the DokuWiki. When basic simple search is not enough you can try using the methods listed below:
 
 === Phrase search (\"\") ===
 Put double quotes around a set of words to enable phrase search mode. For example:

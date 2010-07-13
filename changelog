@@ -1,5 +1,7 @@
 Version 0.3
- * Namespace list constructed by Sphinx search query
+ * Added Help Page 
+ * Renamed filter name from "@categories" to "@ns" 
+ * Matching pagenames list constructed by Sphinx search
  * Fixed bug with search query
  * Added grouping search results by page with nested subsections
  * Fixed bug with relevance

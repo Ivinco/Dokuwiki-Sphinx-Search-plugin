@@ -122,16 +122,15 @@ Such query will look for documents that have keyword \"blog\" but don't have key
         $result = $search->search($start, $this->getConf('maxresults'));
         $this->_search = $search;
 
-        if (!$result || $search->getError()){
-            echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
-                <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
+        if ($search->getError()){
+            echo $search->getError();
             return;
         }
 
         $pagesList = $search->getPages($keywords);
         
         $totalFound = $search->getTotalFound();
-        if(empty($pagesList) || 0 == $totalFound){
+        if(!$result || empty($pagesList) || 0 == $totalFound){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
                 <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;

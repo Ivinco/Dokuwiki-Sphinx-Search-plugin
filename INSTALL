@@ -10,10 +10,12 @@
 1. Unpack plugin files into lib/plugins directory of your DokuWiki installation.
 
 2. Run Sphinx Search indexer to index your DokuWiki data for the first time:
-	$php {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/indexer.php
+        $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/
+	$indexer -c sphinx.conf
 
 3. After indexer completes it's job, run searchd, e.g.:
-	$searchd -c {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/sphinx.conf
+        $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/
+	$searchd -c sphinx.conf
 By default plugin is using 9312 as the searchd port, so make sure this
 port is free (if you have sphinx on other port, see #5).
 

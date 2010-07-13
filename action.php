@@ -75,7 +75,8 @@ class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
         $search->setArroundWordsCount($this->getConf('aroundwords'));
         $search->setTitlePriority($this->getConf('title_priority'));
         $search->setBodyPriority($this->getConf('body_priority'));
-        $search->setCategoriesPriority($this->getConf('categories_priority'));
+        $search->setNamespacePriority($this->getConf('namespace_priority'));
+        $search->setPagenamePriority($this->getConf('pagename_priority'));
 
         if (!empty($keywords) && empty($categories)){
             $search->setSearchAllQuery($keywords, $categories);
@@ -316,8 +317,8 @@ function sh(id)
     {
         $categories = '';
         $query = urldecode($query);
-        if (false !== ($pos = strpos($query, "@categories"))){;
-            $categories = substr($query, $pos + strlen("@categories"));
+        if (false !== ($pos = strpos($query, "@cat"))){;
+            $categories = substr($query, $pos + strlen("@cat"));
         }
         return trim($categories);
     }
@@ -326,9 +327,9 @@ function sh(id)
     {
         $keywords = $query;
         $query = urldecode($query);
-        if (false !== ($pos = strpos($query, "-@categories"))){;
+        if (false !== ($pos = strpos($query, "-@cat"))){;
             $keywords = substr($keywords, 0, $pos);
-        }else if (false !== ($pos = strpos($query, "@categories"))){;
+        }else if (false !== ($pos = strpos($query, "@cat"))){;
             $keywords = substr($keywords, 0, $pos);
         }
         return trim($keywords);
@@ -337,6 +338,9 @@ function sh(id)
     function _getMatchingPagenames($keywords, $categories)
     {
         $this->_search->setSearchCategoryQuery($keywords, $categories);
+        $this->_search->setNamespacePriority($this->getConf('mp_namespace_priority'));
+        $this->_search->setPagenamePriority($this->getConf('mp_pagename_priority'));
+
         $res = $this->_search->search(0, 10);
         if (!$res){
             return false;

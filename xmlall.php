@@ -38,7 +38,8 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 <sphinx:schema>
 <sphinx:field name="title"/> 
 <sphinx:field name="body"/>
-<sphinx:field name="categories"/>
+<sphinx:field name="namespace"/>
+<sphinx:field name="pagename"/>
 <sphinx:field name="level"/>
 <sphinx:field name="modified"/>
 <sphinx:attr name="level" type="int" bits="8" default="1"/>
@@ -62,7 +63,8 @@ foreach($pagesList as $row){
             //parse meta data for headers, abstract, date, authors
             $data = array();
             $data['id'] = crc32($dokuPageId.$hid);
-            $data['categories'] = getCategories($dokuPageId) . '#' . $hid;
+            $data['namespace'] = getCategories($dokuPageId);
+            $data['pagename'] = getPagename($dokuPageId);
             $data['level'] = $section['level'];
             $data['modified'] = $metadata['date']['modified'];
             $data['title'] = strip_tags($section['title_text']);
@@ -75,7 +77,8 @@ foreach($pagesList as $row){
     } else {
         $data = array();
         $data['id'] = crc32($dokuPageId);
-        $data['categories'] = getCategories($dokuPageId);
+        $data['namespace'] = getCategories($dokuPageId);
+        $data['pagename'] = getPagename($dokuPageId);
         $data['level'] = 1;
         $data['modified'] = $metadata['date']['modified'];
         $data['title'] = strip_tags($metadata['title']);

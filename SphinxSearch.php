@@ -15,9 +15,10 @@ class SphinxSearch
     private $_aroundKeyword = 5;
     private $_resultsPerPage = 10;
 
-    private $_titlePriority = 20;
-    private $_bodyPriority = 5;
-    private $_categoriesPriority = 10;
+    private $_titlePriority = 1;
+    private $_bodyPriority = 1;
+    private $_namespacePriority = 1;
+    private $_pagenamePriority = 1;
     
     public function  __construct($host, $port, $index)
     {
@@ -31,7 +32,7 @@ class SphinxSearch
     public function setSearchAllQuery($keywords, $categories)
     {
         $starKeyword = $this->starQuery($keywords);
-        $this->_query = "(@categories $starKeyword) | (@(body,title) {$keywords})";
+        $this->_query = "(@(namespace,pagename) $starKeyword) | (@(body,title) {$keywords})";
     }
 
     public function setSearchAllQueryWithCategoryFilter($keywords, $categories)
@@ -40,16 +41,16 @@ class SphinxSearch
         if(strpos($categories, "-") === 0){
             $categories = '-"'.substr($categories, 1).'"';
         }
-        $this->_query = "(@categories {$categories}) & ((@(body,title) {$keywords}) | (@categories {$starKeyword}))";
+        $this->_query = "(@(namespace,pagename) {$categories}) & ((@(body,title) {$keywords}) | (@(namespace,pagename) {$starKeyword}))";
     }
 
     public function setSearchCategoryQuery($keywords, $categories)
     {
         $starKeyword = $this->starQuery($keywords);
         if (!empty($categories)){
-            $this->_query = "(@categories $categories $starKeyword)";
+            $this->_query = "(@(namespace,pagename) $categories $starKeyword)";
         } else {
-            $this->_query = "(@categories $starKeyword)";
+            $this->_query = "(@(namespace,pagename) $starKeyword)";
         }
     }
 
@@ -57,7 +58,12 @@ class SphinxSearch
     {
         $this->_resultsPerPage = $resultsPerPage;
 
-        $this->_sphinx->SetFieldWeights(array('categories' => $this->_categoriesPriority, 'title' => $this->_titlePriority, 'body' => $this->_bodyPriority));
+        $this->_sphinx->SetFieldWeights(array(
+            'namespace' => $this->_namespacePriority,
+            'pagename' => $this->_pagenamePriority,
+            'title' => $this->_titlePriority,
+            'body' => $this->_bodyPriority)
+        );
 
         $this->_sphinx->SetLimits($start, $resultsPerPage+100);
 
@@ -115,9 +121,9 @@ class SphinxSearch
             $category[$crc] = $data['page'];
         }
 
-        $starQuery = $this->starQuery($keywords);
-        $bodyExcerpt = $this->getExcerpt($body, $starQuery);
-        $titleTextExcerpt = $this->getExcerpt($titleText, $starQuery);
+        //$starQuery = $this->starQuery($keywords);
+        $bodyExcerpt = $this->getExcerpt($body, $keywords);
+        $titleTextExcerpt = $this->getExcerpt($titleText, $keywords);
         $i = 0;
         $results = array();
         foreach($body as $crc => $notused){
@@ -212,8 +218,13 @@ class SphinxSearch
         $this->_bodyPriority = $priority;
     }
 
-    public function setCategoriesPriority($priority)
+    public function setNamespacePriority($priority)
     {
-        $this->_categoriesPriority = $priority;
+        $this->_namespacePriority = $priority;
+    }
+
+    public function setPagenamePriority($priority)
+    {
+        $this->_pagenamePriority = $priority;
     }
 }

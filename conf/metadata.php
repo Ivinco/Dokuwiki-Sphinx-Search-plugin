@@ -12,5 +12,7 @@ $conf['snippetsize'] = array('numeric');
 $conf['arroundwords'] = array('numeric');
 $conf['body_priority'] = array('numeric');
 $conf['title_priority'] = array('numeric');
-$conf['categories_priority'] = array('numeric');
-
+$conf['namespace_priority'] = array('numeric');
+$conf['pagename_priority'] = array('numeric');
+$conf['mp_namespace_priority'] = array('numeric');
+$conf['mp_pagename_priority'] = array('numeric');

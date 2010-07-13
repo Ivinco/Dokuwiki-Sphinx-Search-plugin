@@ -10,15 +10,19 @@ function formatXml($data)
 <sphinx:document id="{id}">
 <title><![CDATA[[{title}]]></title>
 <body><![CDATA[[{body}]]></body>
-<categories><![CDATA[[{categories}]]></categories>
+<namespace><![CDATA[[{namespace}]]></namespace>
+<pagename><![CDATA[[{pagename}]]></pagename>
 <level>{level}</level>
 <modified>{modified}</modified>
 </sphinx:document>
 
 ';
 
-    return str_replace( array('{id}', '{title}', '{body}', '{categories}', '{level}', '{modified}'),
-                        array($data['id'], escapeTextValue($data['title_to_index']), escapeTextValue($data['body']), escapeTextValue($data['categories']),
+    return str_replace( array('{id}', '{title}', '{body}', '{namespace}', '{pagename}', '{level}', '{modified}'),
+                        array($data['id'], escapeTextValue($data['title_to_index']),
+                            escapeTextValue($data['body']),
+                            escapeTextValue($data['namespace']),
+                            escapeTextValue($data['pagename']),
                              $data['level'], $data['modified']),
                 $xmlFormat
             );
@@ -216,11 +220,11 @@ function getCategories($id)
     if (empty($id)) return '';
 
     if (false === strpos($id, ":")){
-        return $id;
+        return '';
     }
 
     $ns = explode(":", $id);
-    $nsCount = count($ns);
+    $nsCount = count($ns) - 1;
 
     $result = '';
     do{
@@ -235,6 +239,19 @@ function getCategories($id)
     }while($nsCount--);
     return $result;
 }
+
+function getPagename($id)
+{
+    if (empty($id)) return '';
+
+    if (false === strpos($id, ":")){
+        return $id;
+    }
+
+    $ns = explode(":", $id);
+    return $ns[count($ns) - 1];
+}
+
 
 
  /**
@@ -278,7 +295,7 @@ function getNsLinks($id, $keywords, $search)
         } else {
             $titles[wl($page)] = $parts[$i];
         }
-        $data[] = array('link' => "?do=search&id={$keywords}".urlencode(" @categories $page"));
+        $data[] = array('link' => "?do=search&id={$keywords}".urlencode(" @cat $page"));
     }
     $titleExcerpt = $search->getExcerpt($titles, $search->starQuery($keywords));
     $i = 0;

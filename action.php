@@ -71,10 +71,10 @@ Such query will look for documents that have keyword \"blog\" but don't have key
         $event->stopPropagation();
         $event->preventDefault();
 
-        if (!extension_loaded('sqlite')) {
+/*        if (!extension_loaded('sqlite')) {
             echo "SQLite extension is not loaded!";
             return;
-        }
+        }*/
 
         if(!empty($_REQUEST['ssplugininfo'])){
             $info = array();

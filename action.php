@@ -123,7 +123,7 @@ Such query will look for documents that have keyword \"blog\" but don't have key
         $this->_search = $search;
 
         if ($search->getError()){
-            echo $search->getError();
+            echo "Could not connect to Sphinx search engine.";
             return;
         }
 

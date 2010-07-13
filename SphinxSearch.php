@@ -52,6 +52,7 @@ class SphinxSearch
         } else {
             $this->_query = "(@(namespace,pagename) $starKeyword)";
         }
+        
     }
 
     public function search($start, $resultsPerPage = 10)

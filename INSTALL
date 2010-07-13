@@ -11,7 +11,7 @@
 
 2. Run Sphinx Search indexer to index your DokuWiki data for the first time:
         $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/
-	$indexer -c sphinx.conf
+	$indexer -c sphinx.conf dk_main
 
 3. After indexer completes it's job, run searchd, e.g.:
         $cd {Your_DokuWiki_Path}/lib/plugins/sphinxsearch/

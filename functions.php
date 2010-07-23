@@ -364,3 +364,58 @@ function printNamespacesNew($pageNames)
     }
     print '</ul>';
 }
+
+if(!function_exists('shorten')){
+    /**
+     * Shorten a given string by removing data from the middle
+     *
+     * You can give the string in two parts, teh first part $keep
+     * will never be shortened. The second part $short will be cut
+     * in the middle to shorten but only if at least $min chars are
+     * left to display it. Otherwise it will be left off.
+     *
+     * @param string $keep   the part to keep
+     * @param string $short  the part to shorten
+     * @param int    $max    maximum chars you want for the whole string
+     * @param int    $min    minimum number of chars to have left for middle shortening
+     * @param string $char   the shortening character to use
+     */
+    function shorten($keep,$short,$max,$min=9,$char='⌇'){
+        $max = $max - utf8_strlen($keep);
+       if($max < $min) return $keep;
+        $len = utf8_strlen($short);
+        if($len <= $max) return $keep.$short;
+        $half = floor($max/2);
+        return $keep.utf8_substr($short,0,$half-1).$char.utf8_substr($short,$len-$half);
+    }
+}
+if(!function_exists('utf8_strlen')){
+    /**
+     * Unicode aware replacement for strlen()
+     *
+     * utf8_decode() converts characters that are not in ISO-8859-1
+     * to '?', which, for the purpose of counting, is alright - It's
+     * even faster than mb_strlen.
+     *
+     * @author <chernyshevsky at hotmail dot com>
+     * @see    strlen()
+     * @see    utf8_decode()
+     */
+    function utf8_strlen($string){
+        return strlen(utf8_decode($string));
+    }
+}
+
+if(!function_exists('utf8_decode')){
+    /**
+     * (PHP 4, PHP 5)<br/>
+     * Converts a string with ISO-8859-1 characters encoded with UTF-8
+       to single-byte ISO-8859-1
+     * @link http://php.net/manual/en/function.utf8-decode.php
+     * @param string $data <p>
+     * An UTF-8 encoded string.
+     * </p>
+     * @return string the ISO-8859-1 translation of data.
+     */
+    function utf8_decode ($data) {}
+}

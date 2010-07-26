@@ -389,33 +389,3 @@ if(!function_exists('shorten')){
         return $keep.utf8_substr($short,0,$half-1).$char.utf8_substr($short,$len-$half);
     }
 }
-if(!function_exists('utf8_strlen')){
-    /**
-     * Unicode aware replacement for strlen()
-     *
-     * utf8_decode() converts characters that are not in ISO-8859-1
-     * to '?', which, for the purpose of counting, is alright - It's
-     * even faster than mb_strlen.
-     *
-     * @author <chernyshevsky at hotmail dot com>
-     * @see    strlen()
-     * @see    utf8_decode()
-     */
-    function utf8_strlen($string){
-        return strlen(utf8_decode($string));
-    }
-}
-
-if(!function_exists('utf8_decode')){
-    /**
-     * (PHP 4, PHP 5)<br/>
-     * Converts a string with ISO-8859-1 characters encoded with UTF-8
-       to single-byte ISO-8859-1
-     * @link http://php.net/manual/en/function.utf8-decode.php
-     * @param string $data <p>
-     * An UTF-8 encoded string.
-     * </p>
-     * @return string the ISO-8859-1 translation of data.
-     */
-    function utf8_decode ($data) {}
-}

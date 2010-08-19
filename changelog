@@ -1,3 +1,7 @@
+Version 0.3.2
+ * Fixed bug - document parsing by section
+Version 0.3.1
+ * Fixed bug with dokuwiki version 2008-05-05
 Version 0.3
  * Added Help Page 
  * Renamed filter name from "@categories" to "@ns" 

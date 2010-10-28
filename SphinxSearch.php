@@ -31,12 +31,14 @@ class SphinxSearch
 
     public function setSearchAllQuery($keywords, $categories)
     {
+        $keywords = $this->_sphinx->EscapeString($keywords);
         $starKeyword = $this->starQuery($keywords);
         $this->_query = "(@(namespace,pagename) $starKeyword) | (@(body,title) {$keywords})";
     }
 
     public function setSearchAllQueryWithCategoryFilter($keywords, $categories)
     {
+        $keywords = $this->_sphinx->EscapeString($keywords);
         $starKeyword = $this->starQuery($keywords);
         if(strpos($categories, "-") === 0){
             $categories = '-"'.substr($categories, 1).'"';
@@ -46,6 +48,7 @@ class SphinxSearch
 
     public function setSearchCategoryQuery($keywords, $categories)
     {
+        $keywords = $this->_sphinx->EscapeString($keywords);
         $starKeyword = $this->starQuery($keywords);
         if (!empty($categories)){
             $this->_query = "(@(namespace,pagename) $categories $starKeyword)";

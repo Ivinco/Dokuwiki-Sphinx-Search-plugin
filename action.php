@@ -60,7 +60,7 @@ Such query will look for documents that have keyword \"blog\" but don't have key
     }
 
     /**
-     * If our own 'googlesearch' action was given we produce our content here
+     * If our own action was given we produce our content here
      */
     function handle_act_unknown(&$event, $param){
         global $ACT;

@@ -1,3 +1,6 @@
+Version 0.3.3
+ * Minor bugfix release - improved indexing and search relevance
+ * Fixed search query escaping
 Version 0.3.2
  * Fixed bug - document parsing by section
 Version 0.3.1

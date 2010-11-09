@@ -1,5 +1,5 @@
 Version 0.3.4
- * Added detect of documents encoding
+ * Added document encoding detection
 Version 0.3.3
  * Minor bugfix release - improved indexing and search relevance
  * Fixed search query escaping

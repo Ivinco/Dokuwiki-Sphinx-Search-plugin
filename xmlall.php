@@ -71,6 +71,10 @@ foreach($pagesList as $row){
             $data['title_to_index'] = $section['title_to_index'];
             $data['body'] = $section['section']; //strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
+            //convert to utf-8 encoding
+            $data['title_to_index'] = mb_convert_encoding($data['title_to_index'], "UTF-8", mb_detect_encoding($data['title_to_index'], "auto"));
+            $data['body'] = mb_convert_encoding($data['body'], "UTF-8", mb_detect_encoding($data['body'], "auto"));
+
             echo formatXml($data)."\n";
             $pageMapper->add($dokuPageId, $data['title'], $section['title'], $hid);
         }
@@ -84,6 +88,10 @@ foreach($pagesList as $row){
         $data['title'] = strip_tags($metadata['title']);
         $data['title_to_index'] = $metadata['title'];
         $data['body'] = io_readFile(wikiFN($dokuPageId)); //strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
+
+        //convert to utf-8 encoding
+        $data['title_to_index'] = mb_convert_encoding($data['title_to_index'], "UTF-8", mb_detect_encoding($data['title_to_index'], "auto"));
+        $data['body'] = mb_convert_encoding($data['body'], "UTF-8", mb_detect_encoding($data['body'], "auto"));
 
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);

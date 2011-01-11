@@ -51,9 +51,11 @@ You can add a minus sign to a keyword or a category name exclude it from search.
 Such query will look for \"hotel\" everywhere except the \"personal:mike\" namespace.
 <code>blog -post</code>
 Such query will look for documents that have keyword \"blog\" but don't have keyword \"post\".
-DokuWiki Sphinx Search plugin (version {$this->_versionNumber}) by <a href='http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/'>Ivinco</a>.
-";
 
+
+DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/|Ivinco]].
+";
+	return $this->_helpMessage;
     }
 
     /**
@@ -85,7 +87,7 @@ DokuWiki Sphinx Search plugin (version {$this->_versionNumber}) by <a href='http
 
         if(!empty($_REQUEST['ssplugininfo'])){
             $info = array();
-            echo p_render('xhtml',p_get_instructions($this->_helpMessage), $info);
+            echo p_render('xhtml',p_get_instructions($this->getHelpInfo()), $info);
             return;
         }
         
@@ -265,7 +267,8 @@ function sh(id)
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }
             echo '</div>';
-            echo '<a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>. DokuWiki Sphinx Search plugin (version '.$this->_versionNumber.') by <a href="http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/">Ivinco</a>.';
+            echo '<a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>. ';
+ 	    echo 'DokuWiki Sphinx Search plugin (version '.$this->_versionNumber.') by <a href="http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/">Ivinco</a>.';
             echo '</div>';
         }
 

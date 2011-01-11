@@ -1,3 +1,5 @@
+Version 0.3.3
+ * Fixed bug - in search function for version dokuwiki-2010-11-07 by “Anteater”
 Version 0.3.2
  * Fixed bug - document parsing by section
 Version 0.3.1

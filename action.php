@@ -51,6 +51,9 @@ You can add a minus sign to a keyword or a category name exclude it from search.
 Such query will look for \"hotel\" everywhere except the \"personal:mike\" namespace.
 <code>blog -post</code>
 Such query will look for documents that have keyword \"blog\" but don't have keyword \"post\".
+
+====
+DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/|Ivinco]].
 ";
 	return $this->_helpMessage;
     }
@@ -85,7 +88,6 @@ Such query will look for documents that have keyword \"blog\" but don't have key
         if(!empty($_REQUEST['ssplugininfo'])){
             $info = array();
             echo p_render('xhtml',p_get_instructions($this->getHelpInfo()), $info);
-	    echo 'DokuWiki Sphinx Search plugin (version '.$this->_versionNumber.') by <a href="http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/">Ivinco</a>.';
             return;
         }
         

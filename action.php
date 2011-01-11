@@ -53,8 +53,7 @@ Such query will look for \"hotel\" everywhere except the \"personal:mike\" names
 Such query will look for documents that have keyword \"blog\" but don't have keyword \"post\".
 
 
-==== ====
-----
+===== =====
 DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/|Ivinco]].
 ";
 	return $this->_helpMessage;

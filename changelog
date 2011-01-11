@@ -1,5 +1,12 @@
 Version 0.3.6
  * Fixed bug - in search function for version dokuwiki-2010-11-07 by “Anteater”
+Version 0.3.5
+ * Indexer fix: turned off PHP error/warning messages
+Version 0.3.4
+ * Added document encoding detection
+Version 0.3.3
+ * Minor bugfix release - improved indexing and search relevance
+ * Fixed search query escaping
 Version 0.3.2
  * Fixed bug - document parsing by section
 Version 0.3.1

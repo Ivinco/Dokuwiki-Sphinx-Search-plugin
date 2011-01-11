@@ -265,7 +265,7 @@ function getPagename($id)
 
     $data = array();
     sort($data);
-    search($data,$conf['datadir'],'search_allpages','','');
+    search($data,$conf['datadir'],'search_allpages',array('skipacl'=>1),'');
 
     return $data;
 }

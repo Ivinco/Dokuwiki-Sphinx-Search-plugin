@@ -1,5 +1,5 @@
 Version 0.3.6
- * Fixed bug - in search function for version dokuwiki-2010-11-07 by “Anteater”
+ * Fixed compatibility problem with version dokuwiki-2010-11-07.tgz "Anteater"
 Version 0.3.5
  * Indexer fix: turned off PHP error/warning messages
 Version 0.3.4

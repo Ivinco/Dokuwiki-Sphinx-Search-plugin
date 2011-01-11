@@ -20,7 +20,18 @@ require_once(DOKU_PLUGIN . 'sphinxsearch/functions.php');
 class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
     var $_search = null;
 
-    var $_helpMessage = "
+    var $_helpMessage = '';
+    var $_versionNumber = '0.3.6';
+
+    /**
+	* return some info
+	*/
+    function getInfo() {
+        return confToHash(dirname(__FILE__).'/plugin.info.txt');
+	}
+
+    function getHelpInfo(){
+	$this->_helpMessage = "
 ===== DokuWiki Sphinx Search plugin features=====
 
 To use the search you need to just enter your search keywords into the searchbox at the top right corner of the DokuWiki. When basic simple search is not enough you can try using the methods listed below:
@@ -40,14 +51,10 @@ You can add a minus sign to a keyword or a category name exclude it from search.
 Such query will look for \"hotel\" everywhere except the \"personal:mike\" namespace.
 <code>blog -post</code>
 Such query will look for documents that have keyword \"blog\" but don't have keyword \"post\".
+DokuWiki Sphinx Search plugin (version {$this->_versionNumber}) by <a href='http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/'>Ivinco</a>.
 ";
 
-    /**
-	* return some info
-	*/
-    function getInfo() {
-        return confToHash(dirname(__FILE__).'/plugin.info.txt');
-	}
+    }
 
     /**
 	* Register to the content display event to place the results under it.
@@ -258,7 +265,7 @@ function sh(id)
                                           'next','wikilink1 gs_next',$conf['target']['interwiki']);
             }
             echo '</div>';
-            echo '<a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
+            echo '<a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>. DokuWiki Sphinx Search plugin (version '.$this->_versionNumber.') by <a href="http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/">Ivinco</a>.';
             echo '</div>';
         }
 

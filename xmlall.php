@@ -6,7 +6,8 @@
  * @author     Andreas Gohr <andi@splitbrain.org>
  */
 
-
+$deStatus = ini_get('display_errors');
+ini_set('display_errors', 0);
 /* Initialization */
 
 if(!defined('DOKU_INC')) define('DOKU_INC',dirname(__FILE__).'/../../../');
@@ -99,3 +100,5 @@ foreach($pagesList as $row){
     
 }
 echo '</sphinx:docset>';
+
+ini_set('display_errors', $deStatus);

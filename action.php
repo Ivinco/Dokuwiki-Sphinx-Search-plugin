@@ -2,7 +2,7 @@
 /**
  * Script to search in dokuwiki documents
  *
- * @author Yaroslav Vorozhko <yaroslav@ivinco.com>
+ * @author Ivinco <opensource@ivinco.com>
  */
 
 if(!defined('DOKU_INC')) die();

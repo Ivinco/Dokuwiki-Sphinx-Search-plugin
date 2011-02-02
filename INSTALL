@@ -1,5 +1,5 @@
 === Requirements ===
-
+ 
 1. Sphinx Search (http://www.sphinxsearch.com/downloads.html)
 
 2. PHP5 with SQLite extension (it is enabled by default as of PHP 5)

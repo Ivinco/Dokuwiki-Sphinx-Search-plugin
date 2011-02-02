@@ -2,8 +2,7 @@
 /**
  * XML feed export
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Andreas Gohr <andi@splitbrain.org>
+ * @author     Ivinco <opensource@ivinco.com>
  */
 
 $deStatus = ini_get('display_errors');

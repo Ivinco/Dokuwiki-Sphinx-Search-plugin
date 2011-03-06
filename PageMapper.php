@@ -12,9 +12,15 @@ class PageMapper
     public function  __construct()
     {
         global $conf;
-        $this->_dbpath = DOKU_INC . $conf['savedir'] . '/sphinxsearch/'.$this->_database;
 
-        if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {
+        $dataPath = fullpath($conf['savedir']);
+        if (!@file_exists($dataPath)) {
+           $dataPath = fullpath(DOKU_INC . $conf['savedir']);
+        }
+        $this->_dbpath = $dataPath . '/sphinxsearch/' . $this->_database;
+
+
+        if (false != ($db = new PDO("sqlite:".$this->_dbpath))) {            
             $q = @$db->query("SELECT 1 FROM {$this->_table} limit 1");
             if ($q === false) {
                 $result = $db->query("CREATE TABLE {$this->_table} ( page varchar(1024), page_crc int(11), hid varchar(1024), title_text varchar(1024), title varchar(1024), unique (page, page_crc))");
@@ -25,6 +31,10 @@ class PageMapper
                 }
 
             }
+        } else {
+            echo "\nPDO::errorInfo():\n";
+            print_r($db->errorInfo());
+            exit;
         }
         $this->_db = $db;
     }

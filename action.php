@@ -135,7 +135,7 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
         if ($search->getError()){
             echo "Could not connect to Sphinx search engine.";
             return;
-        }
+        }        
 
         if(!$result){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>

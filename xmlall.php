@@ -26,8 +26,14 @@ require_once(DOKU_INC.'inc/parser/parser.php');
 require_once(DOKU_PLUGIN.'sphinxsearch/PageMapper.php');
 require_once(DOKU_PLUGIN.'sphinxsearch/functions.php');
 
-if (!file_exists(DOKU_INC.$conf['savedir']."/sphinxsearch/")){
-	mkdir(DOKU_INC.$conf['savedir']."/sphinxsearch/");
+$dataPath = fullpath($conf['savedir']);
+if (!@file_exists($dataPath)) {
+    $dataPath = fullpath(DOKU_INC . $conf['savedir']);
+    if (!@file_exists($dataPath)) die('invalid DokuWiki savedir');
+}
+$fullSphinxPath = $dataPath . '/sphinxsearch/';
+if (!@file_exists($fullSphinxPath)) {
+    mkdir($fullSphinxPath);
 }
 
 $pagesList = getPagesList();

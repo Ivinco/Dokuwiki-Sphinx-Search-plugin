@@ -72,6 +72,7 @@ class SphinxSearch
         $this->_sphinx->SetLimits($start, $resultsPerPage+100);
 
         $res = $this->_sphinx->Query($this->_query, $this->_index);
+
         $this->_result = $res;
 
         if (empty($res['matches'])) {
@@ -85,6 +86,7 @@ class SphinxSearch
         if (empty($this->_result['matches'])) {
             return false;
 	}
+
         $pagesIdsAll = $this->getPagesIds();
         $this->_offset = 0;
         $counter = 0;

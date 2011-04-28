@@ -42,7 +42,7 @@ class PageMapper
     public function add($page, $title_text, $title, $hid='')
     {
         $result = $this->_db->query("REPLACE into {$this->_table}(page, page_crc, hid, title, title_text) values(".$this->_db->quote($page).",
-                                    '".crc32($page.$hid)."',
+                                    '".sprintf('%u', crc32($page.$hid))."',
                                     ".$this->_db->quote($hid).",
                                     ".$this->_db->quote($title).",
                                     ".$this->_db->quote($title_text).")");

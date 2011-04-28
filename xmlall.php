@@ -68,7 +68,7 @@ foreach($pagesList as $row){
         foreach($sections as $hid => $section){
             //parse meta data for headers, abstract, date, authors
             $data = array();
-            $data['id'] = crc32($dokuPageId.$hid);
+            $data['id'] = sprintf('%u', crc32($dokuPageId.$hid));
             $data['namespace'] = getCategories($dokuPageId);
             $data['pagename'] = getPagename($dokuPageId);
             $data['level'] = $section['level'];
@@ -86,7 +86,7 @@ foreach($pagesList as $row){
         }
     } else {
         $data = array();
-        $data['id'] = crc32($dokuPageId);
+        $data['id'] = sprintf('%u', crc32($dokuPageId.$hid)); 
         $data['namespace'] = getCategories($dokuPageId);
         $data['pagename'] = getPagename($dokuPageId);
         $data['level'] = 1;

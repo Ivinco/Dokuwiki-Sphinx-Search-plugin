@@ -1,3 +1,6 @@
+Version 0.3.7
+ * Fixed detection of DokuWiki data directory when data directory is absolute
+ path
 Version 0.3.6
  * Fixed compatibility problem with version dokuwiki-2010-11-07.tgz "Anteater"
 Version 0.3.5

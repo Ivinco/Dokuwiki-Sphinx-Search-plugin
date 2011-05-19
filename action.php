@@ -403,7 +403,7 @@ function sh(id)
         foreach($pageIds as $page){
             $matchPages[$page['page']] = $page['hid'];
         }
-        return array_unique($matchPages);
+        return $matchPages;
     }
 }
 

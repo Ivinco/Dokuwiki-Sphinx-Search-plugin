@@ -57,7 +57,10 @@ class SphinxSearch
         }
         
     }
-
+	public function setSearchOnlyPagename()
+	{
+		$this->_query = "(@(pagename) {$this->_query})";        
+	}
     public function search($start, $resultsPerPage = 10)
     {
         $this->_resultsPerPage = $resultsPerPage;

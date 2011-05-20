@@ -389,7 +389,8 @@ function sh(id)
 
     function _getMatchingPagenames($keywords, $categories)
     {
-        $this->_search->setSearchCategoryQuery($keywords, $categories);
+		//$this->_search->setSearchCategoryQuery($keywords, $categories);
+		$this->_search->setSearchOnlyPagename();
         $this->_search->setNamespacePriority($this->getConf('mp_namespace_priority'));
         $this->_search->setPagenamePriority($this->getConf('mp_pagename_priority'));
 

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -19,12 +19,12 @@ class SphinxSearch
     private $_bodyPriority = 1;
     private $_namespacePriority = 1;
     private $_pagenamePriority = 1;
-    
+
     public function  __construct($host, $port, $index)
     {
         $this->_sphinx = new SphinxClient();
         $this->_sphinx->SetServer($host, $port);
-        $this->_sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);        
+        $this->_sphinx->SetMatchMode(SPH_MATCH_EXTENDED2);
 
         $this->_index = $index;
     }
@@ -32,6 +32,7 @@ class SphinxSearch
     public function setSearchAllQuery($keywords, $categories)
     {
         $keywords = $this->_sphinx->EscapeString($keywords);
+        $keywords = $this->_enableQuotesAndDefis($keywords);
         $starKeyword = $this->starQuery($keywords);
         $this->_query = "(@(namespace,pagename) $starKeyword) | (@(body,title) {$keywords})";
     }
@@ -39,6 +40,7 @@ class SphinxSearch
     public function setSearchAllQueryWithCategoryFilter($keywords, $categories)
     {
         $keywords = $this->_sphinx->EscapeString($keywords);
+        $keywords = $this->_enableQuotesAndDefis($keywords);
         $starKeyword = $this->starQuery($keywords);
         if(strpos($categories, "-") === 0){
             $categories = '-"'.substr($categories, 1).'"';
@@ -49,18 +51,22 @@ class SphinxSearch
     public function setSearchCategoryQuery($keywords, $categories)
     {
         $keywords = $this->_sphinx->EscapeString($keywords);
+        $keywords = $this->_enableQuotesAndDefis($keywords);
+
         $starKeyword = $this->starQuery($keywords);
         if (!empty($categories)){
             $this->_query = "(@(namespace,pagename) $categories $starKeyword)";
         } else {
             $this->_query = "(@(namespace,pagename) $starKeyword)";
         }
-        
+
     }
-	public function setSearchOnlyPagename()
-	{
-		$this->_query = "(@(pagename) {$this->_query})";        
-	}
+
+    public function setSearchOnlyPagename()
+    {
+    	$this->_query = "(@(pagename) {$this->_query})";
+    }
+
     public function search($start, $resultsPerPage = 10)
     {
         $this->_resultsPerPage = $resultsPerPage;
@@ -101,14 +107,14 @@ class SphinxSearch
                 if(!isset($tmpRes[$pageData['page']])){
                     $tmpRes[$pageData['page']] = 1;
                     $counter++;
-                } 
+                }
                 $pagesIds[$id] = $pageData;
                 if ($counter == $this->_resultsPerPage){
                     break;
                 }
-            }             
-        }        
-        if (empty($pagesIds)){            
+            }
+        }
+        if (empty($pagesIds)){
             return false;
         }
 
@@ -117,6 +123,9 @@ class SphinxSearch
         $titleText = array();
         $category = array();
         foreach ($pagesIds as $crc => $data){
+            if (empty($data['page'])){
+                continue;
+            }
             if (!empty($data['hid'])){
                 $bodyHtml = p_render('xhtml',p_get_instructions(getSectionByTitleLevel($data['page'], $data['title'], true)),$info);
             } else {
@@ -132,7 +141,7 @@ class SphinxSearch
             }
             $category[$crc] = $data['page'];
         }
-
+        
         //$starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $keywords);
         $titleTextExcerpt = $this->getExcerpt($titleText, $keywords);
@@ -238,5 +247,19 @@ class SphinxSearch
     public function setPagenamePriority($priority)
     {
         $this->_pagenamePriority = $priority;
+    }
+
+    private function _enableQuotesAndDefis($query)
+    {
+        $query = ' '. $query;
+        $quotesCount = count(explode('"', $query))-1;
+        if ($quotesCount && $quotesCount%2 == 0){
+            $query = str_replace('\"', '"', $query);
+        }
+        $query = preg_replace("#\s\\\-(\w)#ui", " -$1", $query);
+
+        $query = substr($query, 1);
+
+        return $query;
     }
 }

@@ -42,7 +42,7 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 <sphinx:docset>
 
 <sphinx:schema>
-<sphinx:field name="title"/> 
+<sphinx:field name="title"/>
 <sphinx:field name="body"/>
 <sphinx:field name="namespace"/>
 <sphinx:field name="pagename"/>
@@ -60,12 +60,15 @@ foreach($pagesList as $row){
         continue;
     }
     //get meta data
-    $metadata = p_get_metadata($dokuPageId);    
-    
+    $metadata = p_get_metadata($dokuPageId);
+
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
-    
+
     if (!empty($sections)){
         foreach($sections as $hid => $section){
+            if (empty($section['section'])){
+                continue;
+            }
             //parse meta data for headers, abstract, date, authors
             $data = array();
             $data['id'] = sprintf('%u', crc32($dokuPageId.$hid));
@@ -86,7 +89,7 @@ foreach($pagesList as $row){
         }
     } else {
         $data = array();
-        $data['id'] = sprintf('%u', crc32($dokuPageId.$hid)); 
+        $data['id'] = sprintf('%u', crc32($dokuPageId.$hid));
         $data['namespace'] = getCategories($dokuPageId);
         $data['pagename'] = getPagename($dokuPageId);
         $data['level'] = 1;
@@ -95,6 +98,10 @@ foreach($pagesList as $row){
         $data['title_to_index'] = $metadata['title'];
         $data['body'] = io_readFile(wikiFN($dokuPageId)); //strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
+        if (empty($data['body'])){
+            continue;
+        }
+
         //convert to utf-8 encoding
         $data['title_to_index'] = mb_convert_encoding($data['title_to_index'], "UTF-8", mb_detect_encoding($data['title_to_index'], "auto"));
         $data['body'] = mb_convert_encoding($data['body'], "UTF-8", mb_detect_encoding($data['body'], "auto"));
@@ -102,7 +109,7 @@ foreach($pagesList as $row){
         echo formatXml($data)."\n";
         $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
     }
-    
+
 }
 echo '</sphinx:docset>';
 

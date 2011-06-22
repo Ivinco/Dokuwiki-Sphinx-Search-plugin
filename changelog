@@ -1,3 +1,6 @@
+Version 0.3.8
+ * Fixed excluding keywords processing
+ * Prevent indexing of empty documents
 Version 0.3.7
  * Fixed detection of DokuWiki data directory when data directory is absolute path
  * Added type casting for sphinx IDS from signed to unsigned as it required by
@@ -16,8 +19,8 @@ Version 0.3.2
 Version 0.3.1
  * Fixed bug with dokuwiki version 2008-05-05
 Version 0.3
- * Added Help Page 
- * Renamed filter name from "@categories" to "@ns" 
+ * Added Help Page
+ * Renamed filter name from "@categories" to "@ns"
  * Matching pagenames list constructed by Sphinx search
  * Fixed bug with search query
  * Added grouping search results by page with nested subsections

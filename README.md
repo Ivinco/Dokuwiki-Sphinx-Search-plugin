@@ -1,6 +1,7 @@
 DokuWiki Sphinx search plugin
 ========
 
+This is fork of [https://github.com/Ivinco/Dokuwiki-Sphinx-Search-plugin](https://github.com/Ivinco/Dokuwiki-Sphinx-Search-plugin)
 
 Description
 --------

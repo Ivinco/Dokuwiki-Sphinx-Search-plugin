@@ -1,3 +1,12 @@
+Version 0.4.0
+ * Compatibility with DokuWiki 2026-07-14 "Mort" and PHP 8.4: dropped includes of files removed
+   from DokuWiki core (inc/parser/parser.php, inc/events.php, inc/feedcreator.class.php),
+   switched to namespaced parser modes, replaced resolve_pageid() in the XML export
+ * Updated sphinxapi.php to the 2016 client (works with Manticore Search)
+ * Sample sphinx.conf: removed directives deprecated in Manticore
+Version 0.3.9
+ * Fixed excluding hidden pages from the index, see conf/dokuwiki.php  $conf['hidepages'] configuration option
+ * Fixed bug when text before first section don't indexed
 Version 0.3.8
  * Fixed excluding keywords processing
  * Prevent indexing of empty documents

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -35,6 +35,8 @@ function escapeTextValue($value)
         return "";
     }
     //$value = mb_convert_encoding($value,'UTF-8','ISO-8859-1');
+    $value = str_replace('<?php', 'PHPTAGSTART', $value);
+    $value = str_replace('?>', 'PHPTAGEND', $value);
     $value = strip_tags($value);
     $value = stripInvalidXml($value);
     return str_replace("]]>", "]]><![CDATA[]]]]><![CDATA[>]]><![CDATA[", $value);
@@ -52,7 +54,7 @@ function stripInvalidXml($value)
     $length = strlen($value);
     for ($i=0; $i < $length; $i++)
     {
-      $current = ord($value{$i});
+      $current = ord($value[$i]);
       if (($current == 0x9) ||
           ($current == 0xA) ||
           ($current == 0xD) ||
@@ -77,9 +79,22 @@ function getDocumentsByHeadings($id, $metadata)
     $sections = array();
     $level = 1;
     $previouse_title = '';
+    $firstSection = true;
     foreach($metadata['description']['tableofcontents'] as $row){
+        if ($firstSection){
+            $zerocontent  = getZeroSectionContent($id, $row['title']);
+            if ($zerocontent){
+                $sections[$id] = array(
+                    'section' => $zerocontent,
+                    'level' => 0,
+                    'title' => $id,
+                    'title_to_index' => $id
+                );
+            }
+            $firstSection = false;
+        }
         $sections[$row['hid']] = array(
-                                    'section' => getSectionByTitleLevel($id, $row['title']),
+                                    'section' => getSectionByTitleLevel($id, $row['title'], false),
                                     'level' => $row['level'],
                                     'title' => $row['title']
                                     );
@@ -94,11 +109,31 @@ function getDocumentsByHeadings($id, $metadata)
     return $sections;
 }
 
+function getZeroSectionContent($id, $header)
+{
+    $headerReg = preg_quote($header, '/');
+    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";
+    $doc = io_readFile(wikiFN($id));
+    $matches = array();
+    if (!preg_match("/$regex/i",$doc,$matches)) {
+        return false;
+    }
+    if (empty($matches[1])){
+        return false;
+    }
+    $end = strpos($doc, $matches[1]);
+    if (!$end){
+        return false;
+    }
+    $zerocontent = substr($doc, 0, $end);
+    return $zerocontent;
+}
+
 function getSectionByTitleLevel($id, $header, $extended=false)
 {
     $headerReg = preg_quote($header, '/');
     $doc = io_readFile(wikiFN($id));
-    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";    
+    $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";
     $section = '';
     if (preg_match("/$regex/i",$doc,$matches)) {
         $startHeader = $matches[0];
@@ -116,7 +151,7 @@ function getSectionByTitleLevel($id, $header, $extended=false)
             $section = substr($doc, $startHeaderPos, $endHeaderPos - $startHeaderPos);
         } else {
             $section = substr($doc, $startHeaderPos);
-        }        
+        }
     }
     $section = trim($section);
     //trying to get next section content if body for first section is empty
@@ -148,14 +183,14 @@ function getSection($id, $header)
 
     if (empty($cacheDoc[$id])){
         // Create the parser
-        $Parser = & new Doku_Parser();
+        $Parser = new Doku_Parser();
 
         // Add the Handler
-        $Parser->Handler = & new Doku_Handler();
+        $Parser->Handler = new Doku_Handler();
 
         // Load the header mode to find headers
-        $Parser->addMode('header',new Doku_Parser_Mode_Header());
-        $Parser->addMode('listblock',new Doku_Parser_Mode_ListBlock());
+        $Parser->addMode('header',new \dokuwiki\Parsing\ParserMode\Header() /* was Doku_Parser_Mode_Header, removed in new DokuWiki */);
+        $Parser->addMode('listblock',new \dokuwiki\Parsing\ParserMode\Listblock() /* was Doku_Parser_Mode_ListBlock, removed in new DokuWiki */);
 
         // Loads the raw wiki document
         $doc = io_readFile(wikiFN($id));
@@ -176,9 +211,9 @@ function getSection($id, $header)
     } else {
         $instructions = $cacheInstructions[$id];
         $doc = $cacheDoc[$id];
-    }    
+    }
 
-    
+
 
     // Use this to watch when we're inside the section we want
     $inSection = FALSE;
@@ -275,7 +310,7 @@ function getNsLinks($id, $keywords, $search)
     global $conf;
     $parts = explode(':', $id);
     $count = count($parts);
-    
+
     // print intermediate namespace links
     $part = '';
     $data = array();
@@ -287,7 +322,7 @@ function getNsLinks($id, $keywords, $search)
 
         if (preg_match("#:start$#", $page) && !preg_match("#:start:$#", $part)) {
             $page = substr($page, 0, strpos($page, ":start"));
-        }; 
+        };
 
         // output
         if ($exists){

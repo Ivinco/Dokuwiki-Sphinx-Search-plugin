@@ -12,15 +12,17 @@ ini_set('display_errors', 0);
 if(!defined('DOKU_INC')) define('DOKU_INC',dirname(__FILE__).'/../../../');
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
+define('NOSESSION', true);
+
 require_once(DOKU_INC.'inc/init.php');
 require_once(DOKU_INC.'inc/common.php');
-require_once(DOKU_INC.'inc/events.php');
+//require_once(DOKU_INC.'inc/events.php');
 require_once(DOKU_INC.'inc/parserutils.php');
-require_once(DOKU_INC.'inc/feedcreator.class.php');
+// require_once(DOKU_INC.'inc/feedcreator.class.php'); -- removed in new DokuWiki (feedcreator is in vendor/)
 require_once(DOKU_INC.'inc/auth.php');
 require_once(DOKU_INC.'inc/pageutils.php');
 require_once(DOKU_INC.'inc/search.php');
-require_once(DOKU_INC.'inc/parser/parser.php');
+// require_once(DOKU_INC.'inc/parser/parser.php'); -- removed in new DokuWiki (parser classes are autoloaded)
 
 
 require_once(DOKU_PLUGIN.'sphinxsearch/PageMapper.php');
@@ -55,13 +57,20 @@ echo '<?xml version="1.0" encoding="utf-8"?>
 $pageMapper = new PageMapper();
 foreach($pagesList as $row){
     $dokuPageId = $row['id'];
-    resolve_pageid('',$page,$exists);
+    $exists = page_exists($dokuPageId); // was resolve_pageid() with undefined $page, broken in new DokuWiki
     if (empty($dokuPageId) || !$exists){ //do not include not exists page
         continue;
     }
+    if (!empty($conf['hidepages'])){
+        //check hidepages pattern to exclude hidden pages
+        $testName = ':'.$dokuPageId;
+        if (preg_match("/".$conf['hidepages']."/", $testName)){
+            continue;
+        }
+    }
+
     //get meta data
     $metadata = p_get_metadata($dokuPageId);
-
     $sections = getDocumentsByHeadings($dokuPageId, $metadata);
 
     if (!empty($sections)){
@@ -89,11 +98,12 @@ foreach($pagesList as $row){
         }
     } else {
         $data = array();
-        $data['id'] = sprintf('%u', crc32($dokuPageId.$hid));
+        $data['id'] = sprintf('%u', crc32($dokuPageId));
         $data['namespace'] = getCategories($dokuPageId);
         $data['pagename'] = getPagename($dokuPageId);
         $data['level'] = 1;
-        $data['modified'] = $metadata['date']['modified'];
+#        $data['modified'] = $metadata['date']['modified'];
+	$data['modified'] = isset($metadata['date']['modified']) ? $metadata['date']['modified'] : 0;
         $data['title'] = strip_tags($metadata['title']);
         $data['title_to_index'] = $metadata['title'];
         $data['body'] = io_readFile(wikiFN($dokuPageId)); //strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));

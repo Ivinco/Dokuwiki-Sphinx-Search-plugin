@@ -78,15 +78,13 @@ class SphinxSearch
             'body' => $this->_bodyPriority)
         );
 
-        $this->_sphinx->SetLimits($start, $resultsPerPage+100);
+        $this->_sphinx->SetLimits($start, $resultsPerPage+100, 1000);
 
-        $res = $this->_sphinx->Query($this->_query, $this->_index);
+        $this->_result = $this->_sphinx->Query($this->_query, $this->_index);
 
-        $this->_result = $res;
-
-        if (empty($res['matches'])) {
+        if (empty($this->_result['matches'])) {
             return false;
-	}
+	    }
         return true;
     }
 
@@ -94,7 +92,7 @@ class SphinxSearch
     {
         if (empty($this->_result['matches'])) {
             return false;
-	}
+	    }
 
         $pagesIdsAll = $this->getPagesIds();
         $this->_offset = 0;
@@ -112,6 +110,9 @@ class SphinxSearch
                 if ($counter == $this->_resultsPerPage){
                     break;
                 }
+            } else {
+                // decrease total found counter for the first page if the page is filtered
+                $this->_result['total_found']--;
             }
         }
         if (empty($pagesIds)){
@@ -141,7 +142,7 @@ class SphinxSearch
             }
             $category[$crc] = $data['page'];
         }
-        
+
         //$starQuery = $this->starQuery($keywords);
         $bodyExcerpt = $this->getExcerpt($body, $keywords);
         $titleTextExcerpt = $this->getExcerpt($titleText, $keywords);
@@ -171,6 +172,21 @@ class SphinxSearch
     public function getOffset()
     {
         return $this->_offset;
+    }
+
+    public function getPageNames()
+    {
+        $pageIds = $this->getPagesIds();
+
+        $matchPages = array();
+        foreach ($pageIds as $page) {
+            if (auth_quickaclcheck($page['page']) < AUTH_READ) {
+                continue;
+            }
+            $matchPages[$page['page']] = $page['hid'];
+        }
+
+        return $matchPages;
     }
 
     public function getError()

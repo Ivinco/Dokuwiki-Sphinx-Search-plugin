@@ -1,7 +1,7 @@
 base    sphinxsearch
 author  Ivinco
 email 	opensource@ivinco.com
-date 	2010-03-31
+date 	2026-10-13
 name 	SphinxSearch
 desc 	Replace the default search with Sphinx Search
 url 	http://www.ivinco.com/software/dokuwiki-sphinx-search-plugin/

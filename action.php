@@ -8,7 +8,7 @@
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
-require_once(DOKU_INC.'inc/parser/parser.php');
+// require_once(DOKU_INC.'inc/parser/parser.php'); -- removed in new DokuWiki (parser classes are autoloaded)
 
 require_once(DOKU_PLUGIN . 'action.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/sphinxapi.php');
@@ -65,8 +65,8 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
     /**
      * register the eventhandlers
      */
-    function register(&$controller){
-        $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());        
+    function register(Doku_Event_Handler $controller){
+        $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());
     }
 
     /**
@@ -91,15 +91,15 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
             echo p_render('xhtml',p_get_instructions($this->getHelpInfo()), $info);
             return;
         }
-        
+
         $this->_search($QUERY,$_REQUEST['start'],$_REQUEST['prev']);
-    }    
+    }
 
     /**
      * do the search and displays the result
      */
     function _search($query, $start, $prev) {
-        global $conf;        
+        global $conf;
 
         $start = (int) $start;
         if($start < 0){
@@ -135,7 +135,7 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
         if ($search->getError()){
             echo "Could not connect to Sphinx search engine.";
             return;
-        }        
+        }
 
         if(!$result){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
@@ -144,16 +144,16 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
         }
 
         $pagesList = $search->getPages($keywords);
-        
         $totalFound = $search->getTotalFound();
+
         if(empty($pagesList) || 0 == $totalFound){
             echo 'Your search - <strong>' . $query . '</strong> - did not match any documents.<br/>
                 <a href="?do=search&ssplugininfo=1&id='.$query.'">Search help</a>';
             return;
         } else {
             echo '<style type="text/css">
-                div.dokuwiki .search{
-                    width:1024px;
+                div.dokuwiki div.search{
+                    /*width:1024px;*/
                 }
                 div.dokuwiki .search_snippet{
                     color:#000000;
@@ -210,11 +210,16 @@ function sh(id)
     else
         e.style.display = "block";
 }
-</script>            
+</script>
 ';
 
             echo '<h2>Found '.$totalFound . ($totalFound == 1  ? ' match ' : ' matches ') . ' for query "' . hsc($query).'"</h2>';
             echo '<div class="search">';
+
+            echo '<div class="search_sidebar">';
+            printNamespacesNew($this->_getMatchingPagenames($keywords, $categories));
+            echo '</div>';
+            
             echo '<div class="search_result">';
             // printout the results
             $pageListGroupByPage = array();
@@ -235,12 +240,10 @@ function sh(id)
                     }
                     echo '</div>';
                 }
-                
+
             }
             echo '</div>';
-            echo '<div class="search_sidebar">';
-            printNamespacesNew($this->_getMatchingPagenames($keywords, $categories));
-            echo '</div>';
+
             echo '<div class="sphinxsearch_nav">';
             if ($start > 1){
                 if(false !== strpos($prev, ',')){
@@ -253,10 +256,10 @@ function sh(id)
                 }
 
                 echo $this->external_link(wl('',array('do'=>'search','id'=>$query,'start'=>$prevNum, 'prev'=>$prevString),'false','&'),
-                                          'prev','wikilink1 gs_prev',$conf['target']['interwiki']);                
+                                          'prev','wikilink1 gs_prev',$conf['target']['interwiki']);
             }
             echo ' ';
-            
+
             //if($start + $this->getConf('maxresults') < $totalFound){
                 //$next = $start + $this->getConf('maxresults');
             if($start + $search->getOffset()< $totalFound){
@@ -273,7 +276,7 @@ function sh(id)
             echo '</div>';
         }
 
-        
+
     }
 
     function _showResult($row, $keywords, $subpages = false)
@@ -335,7 +338,7 @@ function sh(id)
         } else if(!empty($metaData['creator'])){
             echo '<span class="search_cnt">by '.$metaData['creator'].'</span> ';
         }
-        
+
         if (!empty($row['subpages'])){
             echo '<br />';
             echo '<div style="text-align:right;font:12px Arial,Helvetica,sans-serif;text-decoration:underline;"><a href="javascript:void(0)" onClick="sh('."'more".$page."'".');" >More matches in this document</a></div>';
@@ -389,8 +392,8 @@ function sh(id)
 
     function _getMatchingPagenames($keywords, $categories)
     {
-	//$this->_search->setSearchCategoryQuery($keywords, $categories);
-	$this->_search->setSearchOnlyPagename();
+	    //$this->_search->setSearchCategoryQuery($keywords, $categories);
+	    $this->_search->setSearchOnlyPagename();
         $this->_search->setNamespacePriority($this->getConf('mp_namespace_priority'));
         $this->_search->setPagenamePriority($this->getConf('mp_pagename_priority'));
 
@@ -398,13 +401,8 @@ function sh(id)
         if (!$res){
             return false;
         }
-        $pageIds = $this->_search->getPagesIds();
 
-        $matchPages = array();
-        foreach($pageIds as $page){
-            $matchPages[$page['page']] = $page['hid'];
-        }
-        return $matchPages;
+        return $this->_search->getPageNames();
     }
 }
 

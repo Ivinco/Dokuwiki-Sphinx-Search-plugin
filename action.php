@@ -8,8 +8,6 @@
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
-// require_once(DOKU_INC.'inc/parser/parser.php'); -- removed in new DokuWiki (parser classes are autoloaded)
-
 require_once(DOKU_PLUGIN . 'action.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/sphinxapi.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/PageMapper.php');
@@ -92,7 +90,7 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
             return;
         }
 
-        $this->_search($QUERY,$_REQUEST['start'],$_REQUEST['prev']);
+        $this->_search($QUERY, $_REQUEST['start'] ?? 0, $_REQUEST['prev'] ?? '');
     }
 
     /**
@@ -245,6 +243,7 @@ function sh(id)
             echo '</div>';
 
             echo '<div class="sphinxsearch_nav">';
+            $prevString = '';
             if ($start > 1){
                 if(false !== strpos($prev, ',')){
                     $prevArry = explode(",", $prev);

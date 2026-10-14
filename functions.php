@@ -189,8 +189,8 @@ function getSection($id, $header)
         $Parser->Handler = new Doku_Handler();
 
         // Load the header mode to find headers
-        $Parser->addMode('header',new \dokuwiki\Parsing\ParserMode\Header() /* was Doku_Parser_Mode_Header, removed in new DokuWiki */);
-        $Parser->addMode('listblock',new \dokuwiki\Parsing\ParserMode\Listblock() /* was Doku_Parser_Mode_ListBlock, removed in new DokuWiki */);
+        $Parser->addMode('header',new \dokuwiki\Parsing\ParserMode\Header());
+        $Parser->addMode('listblock',new \dokuwiki\Parsing\ParserMode\Listblock());
 
         // Loads the raw wiki document
         $doc = io_readFile(wikiFN($id));

@@ -65,6 +65,19 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
      */
     function register(Doku_Event_Handler $controller){
         $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());
+        $controller->register_hook('SEARCH_QUERY_FULLPAGE',   'BEFORE', $this, 'skip_core_search', array());
+        $controller->register_hook('SEARCH_QUERY_PAGELOOKUP', 'BEFORE', $this, 'skip_core_search', array());
+    }
+
+    /**
+     * On the search page our results replace the core ones, so don't run the core search at all
+     */
+    function skip_core_search(&$event, $param){
+        global $ACT;
+        if($ACT != 'search') return;
+
+        $event->result = array();
+        $event->preventDefault();
     }
 
     /**

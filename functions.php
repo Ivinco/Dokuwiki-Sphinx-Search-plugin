@@ -135,6 +135,9 @@ function getSectionByTitleLevel($id, $header, $extended=false)
     $doc = io_readFile(wikiFN($id));
     $regex = "(={1,6})\s*({$headerReg})\s*(={1,6})";
     $section = '';
+    $endDoc = '';
+    $endHeader = '';
+    $endHeaderPos = 0;
     if (preg_match("/$regex/i",$doc,$matches)) {
         $startHeader = $matches[0];
         $startHeaderPos = strpos($doc, $startHeader) + strlen($startHeader);
@@ -338,36 +341,6 @@ function getNsLinks($id, $keywords, $search)
         $data[$key]['title'] = $titleExcerpt[$i++];
     }
     return $data;
-}
-
-function printNamespaces($query)
-{
-  $data = array();
-  $query = str_replace(" ", "_", $query);
-  $data = ft_pageLookup($query, false);
-
-  if(!count($data)) return false;
-
-  print '<h3>Matching pagenames</h3>';
-  print '<ul>';
-  $counter = 0;
-  foreach($data as $id){
-    print '<li>';
-    $ns = getNS($id);
-    if($ns){
-      $name = shorten(noNS($id), ' ('.$ns.')',30);
-    }else{
-      $name = $id;
-    }
-    $href = wl($id);
-
-    tpl_link($href,$id, "class='wikilink1'");
-    print '</li>';
-    if(++$counter == 20){
-        break;
-    }
-  }
-  print '</ul>';
 }
 
 function printNamespacesNew($pageNames)

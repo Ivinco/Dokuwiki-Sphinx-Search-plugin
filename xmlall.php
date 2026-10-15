@@ -81,8 +81,8 @@ foreach($pagesList as $row){
             $data['namespace'] = getCategories($dokuPageId);
             $data['pagename'] = getPagename($dokuPageId);
             $data['level'] = $section['level'];
-            $data['modified'] = $metadata['date']['modified'];
-            $data['title'] = strip_tags($section['title_text']);
+            $data['modified'] = $metadata['date']['modified'] ?? 0;
+            $data['title'] = strip_tags($section['title_text'] ?? '');
             $data['title_to_index'] = $section['title_to_index'];
             $data['body'] = $section['section']; //strip_tags(p_render('xhtml',p_get_instructions($section['section']),$info));
 
@@ -100,8 +100,9 @@ foreach($pagesList as $row){
         $data['pagename'] = getPagename($dokuPageId);
         $data['level'] = 1;
         $data['modified'] = isset($metadata['date']['modified']) ? $metadata['date']['modified'] : 0;
-        $data['title'] = strip_tags($metadata['title']);
-        $data['title_to_index'] = $metadata['title'];
+        $title = $metadata['title'] ?? '';
+        $data['title'] = strip_tags($title);
+        $data['title_to_index'] = $title;
         $data['body'] = io_readFile(wikiFN($dokuPageId)); //strip_tags(p_wiki_xhtml($dokuPageId,$metadata['date']['modified'],false));
 
         if (empty($data['body'])){
@@ -113,7 +114,7 @@ foreach($pagesList as $row){
         $data['body'] = mb_convert_encoding($data['body'], "UTF-8", mb_detect_encoding($data['body'], "auto"));
 
         echo formatXml($data)."\n";
-        $pageMapper->add($dokuPageId, $metadata['title'], $metadata['title']);
+        $pageMapper->add($dokuPageId, $title, $title);
     }
 
 }

@@ -8,14 +8,13 @@
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
-require_once(DOKU_PLUGIN . 'action.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/sphinxapi.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/PageMapper.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/SphinxSearch.php');
 require_once(DOKU_PLUGIN . 'sphinxsearch/functions.php');
 
 
-class action_plugin_sphinxsearch extends DokuWiki_Action_Plugin {
+class action_plugin_sphinxsearch extends \dokuwiki\Extension\ActionPlugin {
     var $_search = null;
 
     var $_helpMessage = '';
@@ -63,7 +62,7 @@ DokuWiki Sphinx Search plugin (version $this->_versionNumber) by [[http://www.iv
     /**
      * register the eventhandlers
      */
-    function register(Doku_Event_Handler $controller){
+    function register(\dokuwiki\Extension\EventHandler $controller){
         $controller->register_hook('TPL_CONTENT_DISPLAY',   'BEFORE', $this, 'handle_act_unknown', array());
         $controller->register_hook('SEARCH_QUERY_FULLPAGE',   'BEFORE', $this, 'skip_core_search', array());
         $controller->register_hook('SEARCH_QUERY_PAGELOOKUP', 'BEFORE', $this, 'skip_core_search', array());

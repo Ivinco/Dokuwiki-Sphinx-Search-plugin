@@ -321,7 +321,8 @@ function getNsLinks($id, $keywords, $search)
     for($i=0; $i<$count; $i++){
         $part .= $parts[$i].':';
         $page = $part;
-        resolve_pageid('',$page,$exists);
+        $page = (new \dokuwiki\File\PageResolver(''))->resolveId($page);
+        $exists = page_exists($page);
 
         if (preg_match("#:start$#", $page) && !preg_match("#:start:$#", $part)) {
             $page = substr($page, 0, strpos($page, ":start"));
